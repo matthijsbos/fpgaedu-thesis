@@ -1,34 +1,33 @@
-\documentclass[singleside,openright]{uva-bachelor-thesis}
-
-%\usepackage[dutch]{babel}  % uncomment if you write in dutch
+\documentclass[openright]{uva-bachelor-thesis}
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{enumitem}
 \usepackage{multicol}
 \usepackage{csquotes}
 \usepackage[margin=1cm,format=hang]{caption}
-\usepackage{subcaption}
+\usepackage{subcaption}	
 \usepackage{pdflscape}
 \usepackage{float}
-\usepackage{svg}
+\usepackage{tocbibind}
+
 
 \usepackage{hyperref}
 \usepackage{cleveref}
 
-\usepackage[style=ieee,backend=biber]{biblatex}
+\usepackage[style=ieee,backend=bibtex]{biblatex}
 \addbibresource{cite.bib}
 
 % Title Page
 \title{A model for \\experiment setups on\\ FPGA development boards}
 \author{Matthijs Bos}
-\supervisors{Toto van Inge (UvA), Taco Walstra (UvA)}
+\supervisors{Toto van Inge (UvA), Taco Walstra (UvA), Edwin Steffens (UvA)}
 \signedby{n.a.}
 
 
+\begin{document} 
 
-
-\begin{document}
 \maketitle
+
 \begin{abstract}
 TODO
 \end{abstract}
@@ -162,7 +161,6 @@ This thesis' research question is as follows:
 How can FPGAs be applied in computer architecture and organization lab experiments, while hiding their technical complexities and removing the need for HDL programming skills?
 \end{displayquote}
 
-
 \chapter{Background}
 
 \section{Field-programmable gate arrays}
@@ -294,7 +292,7 @@ As a starting point, a description of a basic model for experiment setups on FPG
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{overview-basic}
-\caption{The basic model, an abstract overview of the FPGA development board and its exposed interfaces.}
+\caption{The basic model, an overview of the FPGA development board and its exposed interfaces.}
 \label{fig:overview-basic}
 \end{figure}
 
@@ -305,7 +303,7 @@ Besides the omission of details of the FPGA's peripherals, a part of the FPGA's 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{fpga-basic}
-\caption{The basic model, an abstract overview of the FPGA and its contained experiment setup logic. No specific architecture is applied to the logic.}
+\caption{The basic model, an overview of the FPGA and its contained experiment setup logic. No specific architecture is applied to the logic.}
 \label{fig:fpga-basic}
 \end{figure}
 
@@ -364,7 +362,7 @@ In order to support experiment setup entities with a large number of input and o
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{fpga-inout}
-\caption{I/O virtualized, an abstract overview of the FPGA and its contained logic architecture. The controller embeds the experiment setup logic into the FPGA.}
+\caption{I/O virtualized, an overview of the FPGA and its contained logic architecture. The controller embeds the experiment setup logic into the FPGA.}
 \label{fig:fpga-inout}
 \end{figure}
 
@@ -375,7 +373,7 @@ The controller exposes an additional interface through a communication channel t
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{overview-inout}
-\caption{I/O virtualized, an abstract overview of the FPGA development board and its exposed interfaces.}
+\caption{I/O virtualized, an overview of the FPGA development board and its exposed interfaces.}
 \label{fig:overview-inout}
 \end{figure}
 
@@ -383,7 +381,7 @@ The explicit separation of concerns in the logic architecture allows for separat
 
 Experiment setup interaction through dedicated PC software will simplify the experimentation process for experiment setups with large number of input and output signals. Involving the PC removes the need for experimenters to install and familiarize themselves with the FPGA's development tools. Experimenters will be able to interact with the experiment setup through a graphical interface on the PC, removing the need need for HDL programming skills and allowing for real-time interaction, since no recompilation is required. Since the board's I/O devices have been removed at this stage of the model, there is no possibility for users to physically interact with the experiment. The PC software provides the only means of interaction with the experiment setup. These removed I/O devices however, will be reintroduced into the model in section \ref{sectionreintroducingio}.
 
-
+% TODO Hoe ziet de PC software er uit?
 
 
 
@@ -394,13 +392,19 @@ In the previous section, the basic model has been extended to include a definiti
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{fpga-control}
-\caption{Cycle control, an abstract overview of the FPGA and its contained logic architecture. The \texttt{clock\_enable} and \texttt{reset} signals are added to allow for cycle-accurate interaction and (re)initialization.}
+\caption{Cycle control, an overview of the FPGA and its contained logic architecture. The \texttt{clock\_enable} and \texttt{reset} signals are added to allow for cycle-accurate interaction and (re)initialization.}
 \label{fig:fpga-control}
 \end{figure}
 
 As a solution to the problem stated above, the FPGA's contained logic architecture has been extended, as displayed in figure \ref{fig:fpga-control}. The most significant change is the addition of the \texttt{clock\_enable} input signal on the experiment setup's interface definition. Combined with the \texttt{reset} signal, these new input signals allow for cycle-accurate control and reinitialization of the experiment setup logic's state. The introduction of the \texttt{clock\_enable} signal will require modification of every synchronous memory element present in the experiment setup logic, as displayed in figure \ref{fig:clock-manipulation-enable}. By multiplexing the input signal for every memory element based on the same \texttt{clock\_enable}, one can control the state change in a cycle-accurate manner. The method of using enable signals to control synchronous logic is described in \cite[Sec 2.4.5]{arora2011art}.
 
-One may argue that this approach is unfavourable, since it requires modification of existing experiment setup logic designs. This method for controlling state change however, is a common approach in FPGA-targeted HDL development and is used in many designs. More specifically, this approach was also taken in controlling the experiment setups described in \cite{holland2003harnessing} and \cite{bulic2013fpga}. As stated before, FPGAs do not allow for dynamic manipulation of clock signals by design, a method known as clock gating (figure \ref{fig:clock-manipulation-gated}). Clock signals are distributed over the FPGA through dedicated lines that cannot be altered through HDL logic. Some manufacturers include support for static clock division, but still only down to relatively high speeds and do not allow for dynamic adjustment of clock speed [TODO: Bron]. 
+One may argue that this approach is unfavourable, since it requires modification of existing experiment setup logic designs. This method for controlling state change however, is a common approach in FPGA-targeted HDL development and is used in many designs. More specifically, this approach was also taken in controlling the experiment setups described in \cite{holland2003harnessing} and \cite{bulic2013fpga}. As stated before, FPGAs do not allow for dynamic manipulation of clock signals by design, a method known as clock gating (figure \ref{fig:clock-manipulation-gated} ). Clock signals are distributed over the FPGA through dedicated lines that cannot be altered through HDL logic. Some manufacturers include support for static clock division, but still only down to relatively high speeds and do not allow for dynamic adjustment of clock speed [TODO: Bron]. 
+
+% Opmerking Taco 
+% Opmerking bij fig 3.8 discussie. Het board dat je gebruikt is een artix7
+% en die familie (d.w.z. de "7" familie van xilinx) gedraagt zich anders. Er kunnen verschillende clockdomeinen gebruikt worden en dan
+% heb je wel degelijk een soort van gated clock, hoewel dat nooit gebeurt via clk_gated = clk_org &
+% enable. Lees het 7 series fpga clocking resources user guide document van xilinx!
 
 \begin{figure}[h]
     \centering
@@ -418,7 +422,6 @@ One may argue that this approach is unfavourable, since it requires modification
     \end{subfigure}
     \caption{Controlling state transitions through a clock enable signal and a gated clock signal. FPGA's do not support gated clock signals.}
     \label{fig:clock-manipulation}
-    %TODO hier staat opeens een d-flipflop, waarom?
 \end{figure}
 
 In order to make this newly developed functionality available to the experimenter through the PC software, the controller interface is extended to support new operations that allow for the control of cycles. As displayed in figure \ref{fig:overview-control}, five new operations are available through the controller's interface. The \texttt{Controller.Reset()} operation (re)initializes the experiment setup to it initial state and waits for the next operation. Experimenters have manual control over the experiment setup's cycles through the \texttt{Controller.Step()} operation. The controller may also be instructed to manage the experiment setup autonomously through the \texttt{Controller.Start()} operation. The maximum operating frequency may be defined through the \texttt{Controller.LimitSpeed()} operation. The \texttt{Controller.Stop()} operation stops the controller's autonomous management of the experiment setup and awaits the next operation. Similar interfaces for cycle-accurate control of experiment setups are described in \cite{holland2003harnessing} and \cite{bulic2013fpga}.
@@ -426,7 +429,7 @@ In order to make this newly developed functionality available to the experimente
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{overview-control}
-\caption{Cycle control, an abstract overview of the FPGA development board. The controller's interface is extended with operations that allow for cycle-accurate interaction with the experiment setup.}
+\caption{Cycle control, an overview of the FPGA development board. The controller's interface is extended with operations that allow for cycle-accurate interaction with the experiment setup.}
 \label{fig:overview-control}
 \end{figure}
 
@@ -453,28 +456,50 @@ In order to make this newly developed functionality available to the experimente
 \section{Controller Abstraction}
 \label{sectioncontrollerabstraction}
 
-At this stage of the model's development, it supports the embedding of experiment setups defined through combinational logic as well as synchronous sequential logic. Experimenters can interact with these experimenters through PC software that is specifically developed for the experiment setup. While the model has developed to address a number of problems encountered by experimenters, the problems experienced during development have only been partially addressed. Although an architecture for the FPGA's contained logic was developed in the previous sections, a series of dependencies can still be identified in the development process, as displayed in figure \ref{fig:dependencies-control}. 
+At this stage of the model's development, it supports the embedding of experiment setups defined through combinational logic as well as synchronous sequential logic. Experimenters can interact with these experiment setups through PC software that is specifically developed for the experiment setup. While the model has developed to address a number of problems encountered by experimenters, the problems experienced during development have only been addressed partially. Although an architecture for the FPGA's contained logic was developed in the previous sections, a series of dependencies can still be identified in the development process, as displayed in figure \ref{fig:dependencies-control}.  
+
+The source of these dependencies is the interface between controller and experiment setup. This interface is specific for every experiment setup. By defining a standard interface between experiment setup and controller, this dependency is removed. In the current approach, the experiment setup is considered an entity with inputs and outputs, supplemented by a clock signal, a clock\_enable signal and a reset signal. 
 
 
+\subsection{Address Space}
+%TODO zinnen verbeteren, nog redelijk vaag
+In order to be able to provide a generic interface between controller and experiment setup logic, the experiment setup's interface is modified such that it resembles the interface of a block ram, as can be seen in figure \ref{fig:interface-experiment}. The experiment setup's signals are projected on the address space. 
+
+Losing the information about which signal is which is irrelevant to proper operation of the controller. In order for the PC software to be of any practical use however, a definition of this memory space is required, such that the individual signals can be identified from the memory space. 
 
 \begin{figure}[h]
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=1.5in]{interface-bram}
-        \caption{Single-port block RAM}
-        \label{fig:clock-manipulation-enable}
+        \includegraphics[height=1.2in]{interface-bram}
+        \caption{Single-port block ram, derived from \cite{RAMs68}}
+        \label{fig:interface-bram}
     \end{subfigure}%
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
         \includegraphics[height=1.5in]{interface-experiment}
-        \caption{Experiment Setup Interface}
-        \label{fig:clock-manipulation-gated}
+        \caption{Experiment setup interface}
+        \label{fig:interface-experiment}
     \end{subfigure}
-    \caption{Controlling state transitions through a clock enable signal and a gated clock signal. FPGA's do not support gated clock signals.}
-    \label{fig:clock-manipulation}
+    \caption{Interfaces}
+    \label{fig:interfaces}
 \end{figure}
 
+
+\subsection{Memory devices}
+%TODO sectie verbeteren, nog erg vage zinnen.
+
+The experiment setup has been considered to be an entity with input output signals. Any memory elements contained within the experiment setup can be made accessible through these input and output signals. This solution is not very scalable however. In order to allow for the controller to read and write to large memory elements such as block rams and register files, a different solution is required. A solution to this problem is displayed in figure \ref{fig:logic-wrap-extended}. 
+
+A simple wrapper can be computer-generated in many cases. If complex memory devices are contained within the experiment setup, a wrapper can be defined manually, using an experiment setup adapter component, address space splitters and memory interface multiplexers. 
+
+Large memory elements such as register files and block rams may be defined in HDL. During the compilation process, these elements are infered from HDL code and the FPGA's internal block rams are used. If more memory space is required however, external memory devices such as DDR RAM IC's may be required. Since these external RAM devices require a number of cycles in order to accress the data, they must be abstracted in order to be accessible from within the experiment setup logic. In order to achieve the desired effect of seeing these DDR RAM devices as block ram devices that only require a single clock cycle to operate, the controller must stall the \texttt{clock\_enable} signal until the DDR controller finishes the desired operation. 
+
+\subsection{PC Software}
+A major advantage of the generic interface between the controller and experiment setup is that PC software can be developed that is no longer specifically tied to one particular experiment setup design. The controller now acts as a proxy between the PC and the experiment setup. The experiment setup is considered an address space from the PC software, no longer an entity with inputs and outputs. In order for this address space to be of any significant meaning, the PC software requires information on how the data in this address space is structured. During the wrapping process a file will be generated, describing how these experiment setup's signals are projected onto the address space. This file does not only contain information about this projection of signals, but optionally 
+
+%variable address width
+%variable data width
 
 % studenten:
 % - nog niet mogelijk snel te switchen
@@ -482,7 +507,7 @@ At this stage of the model's development, it supports the embedding of experimen
 % - afhankelijkheden tijdens ontwikkelproces.
 % - 
 
-% het is nog niet mogelijk te interfacen met complexe state devices in de experiment setup, zoals register arrays en memory elements. 
+% het is nog niet mogelijk te interfacen met complexe state devices in 
 
 
 % Developed experiment setups are still board-specific
@@ -514,41 +539,24 @@ See figure \ref{fig:fpga-abstract}.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{overview-abstract}
-\caption{Controller abstracted, overview}
-\label{fig:overview-abstract}
-\end{figure}
-
-\begin{figure}[h]
-\centering
 \includegraphics[width=.8\textwidth]{fpga-abstract}
 \caption{Controller abstracted, FPGA logic design}
 \label{fig:fpga-abstract}
 \end{figure}
 
-\subsection{Controller Operation}
-The controller will serve as an intermediary between the pc software and the experiment setup. In betewen experiment cycles, the controller will handle user operations and 
 
-% \begin{figure}
-% \centering
-% \includegraphics[width=\textwidth]{processes-dependencies-abstract}
-% \caption{Controller abstracted, Process dependency graph}
-% \label{fig:processes-dependencies-abstract}
-% \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{overview-abstract}
+\caption{Controller abstracted, overview}
+\label{fig:overview-abstract}
+\end{figure}
 
-% \begin{figure}
-% \centering
-% \makebox[\textwidth][c]{\includegraphics[width=1.25\textwidth]{processes-abstract}}
-% \caption{Controller abstracted, Processes overview}
-% \label{fig:processes-abstract}
-% \end{figure}
 
-% \begin{figure}
-% \centering
-% \includegraphics[width=\textwidth]{toolchain-abstract}
-% \caption{Caption}
-% \label{fig:my_label}
-% \end{figure}
+
+
+
+
 
 \section{Reintroducing Board I/O}
 \label{sectionreintroducingio}
@@ -701,6 +709,29 @@ Reset button behaviour.
 \label{fig:dependencies-io}
 \end{figure}
 \end{landscape}
+
+\chapter{Logic Diagrams}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{logic-wrap-simple}
+    \caption{Caption}
+    \label{fig:logic-wrap-simple}
+\end{figure}
+
+\begin{landscape}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\hsize]{logic-wrap-extended}
+        \caption{Complex wrapper}
+        \label{fig:logic-wrap-extended}
+    \end{figure}
+\end{landscape}
+
+\cleardoublepage
+
+\addcontentsline{toc}{chapter}{Bibliography}
+\phantomsection
 
 \printbibliography
 

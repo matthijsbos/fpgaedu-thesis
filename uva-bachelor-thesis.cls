@@ -3,6 +3,7 @@
 \RequirePackage{graphicx}
 
 
+
 \def\supervisors#1{\gdef\@supervisors{#1}}
 \def\signedby#1{\gdef\@signedby{#1}}
 
@@ -32,11 +33,11 @@
 	\thispagestyle{empty}
 	\hspace*{1em} 	% a fake element on the page (else texpos absolute option
 			% doesn't work)
-	\begin{textblock*}{10cm}(6cm,3cm)
-		\noindent\large\scshape Bachelor Informatica\\[2ex]
-		\includegraphics[height=1cm]{acroniemregel}
-		%\Large Universiteit van Amsterdam
-	\end{textblock*}
+%	\begin{textblock*}{10cm}(6cm,3cm)
+%		\noindent\large\scshape Bachelor Informatica\\[2ex]
+%		\includegraphics[height=1cm]{acroniemregel}
+%		%\Large Universiteit van Amsterdam
+%	\end{textblock*}
 	\begin{textblock*}{10cm}(6cm,6cm)
 		\noindent
 		\sffamily\Huge \@title
