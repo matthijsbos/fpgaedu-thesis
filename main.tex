@@ -1,4 +1,4 @@
-\documentclass[openright]{uva-bachelor-thesis}
+\documentclass[openright]{template/uva-bachelor-thesis}
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{enumitem}
@@ -161,7 +161,17 @@ This thesis' research question is as follows:
 How can FPGAs be applied in computer architecture and organization lab experiments, while hiding their technical complexities and removing the need for HDL programming skills?
 \end{displayquote}
 
+
+
+
+
+
+
 \chapter{Background}
+
+% TODO
+% - terminologie compilation toolchain
+% - infer block ram during compilation
 
 \section{Field-programmable gate arrays}
 Field-programmable gate arrays (FPGA) are a class of integrated circuits (IC) which' behaviour is reconfigurable, as opposed to application specific integrated circuits (ASIC). In their most common form, FPGAs consist of configurable logic blocks (CLB), combined with a configurable network that interconnects these. Many manufacturers combine CLBs with additional static functionality such as memories, I/O controllers and even embedded microprocessors. Which static features are included differs per FPGA model and manufacturer. Figure \ref{fig:fpgastructure} gives a structural overview of a FPGA as manufactured by Xilinx. It shows a number of CLBs, interconnected with I/O blocks (IOB) that connect IC package pins and block rams (BRAM) which serve as static blocks of memory. The digital clock manager (DCM) is responsible for the distribution of clock signals to every of the FPGA's blocks. 
@@ -170,14 +180,14 @@ A CLB's contained logic is described through an internal lookup table in which
 
 \begin{figure}
 \centering
-\includegraphics[width=.7\textwidth]{fpga-block-structure}
+\includegraphics[width=.7\textwidth]{img/fpga-block-structure}
 \caption{Structural FPGA overview \cite{xilinxFPGA}}
 \label{fig:fpgastructure}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=.7\textwidth]{fpga-clb}
+\includegraphics[width=.7\textwidth]{img/fpga-clb}
 \caption{FPGA CLB example overview \cite{fpgaclbimg}}
 \label{fig:my_label}
 \end{figure}
@@ -291,7 +301,7 @@ As a starting point, a description of a basic model for experiment setups on FPG
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.8\textwidth]{overview-basic}
+\includegraphics[width=0.8\textwidth]{img/overview-basic}
 \caption{The basic model, an overview of the FPGA development board and its exposed interfaces.}
 \label{fig:overview-basic}
 \end{figure}
@@ -302,7 +312,7 @@ Besides the omission of details of the FPGA's peripherals, a part of the FPGA's 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{fpga-basic}
+\includegraphics[width=\textwidth]{img/fpga-basic}
 \caption{The basic model, an overview of the FPGA and its contained experiment setup logic. No specific architecture is applied to the logic.}
 \label{fig:fpga-basic}
 \end{figure}
@@ -317,7 +327,7 @@ Experiment setup developers are responsible for the design, implementation, test
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{processes-basic-development}
+    \includegraphics[width=\textwidth]{img/processes-basic-development}
     \caption{The basic model, an overview of the experiment setup development process.}
     \label{fig:process-development-basic}
 \end{figure}
@@ -337,7 +347,7 @@ Experimenters are responsible for carrying out experiments. They obtain experime
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{processes-basic-experimentation}
+    \includegraphics[width=\textwidth]{img/processes-basic-experimentation}
     \caption{The basic model, an overview of the experimentation process.}
     \label{fig:process-experimentation-basic}
 \end{figure}
@@ -361,7 +371,7 @@ In order to support experiment setup entities with a large number of input and o
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{fpga-inout}
+\includegraphics[width=\textwidth]{img/fpga-inout}
 \caption{I/O virtualized, an overview of the FPGA and its contained logic architecture. The controller embeds the experiment setup logic into the FPGA.}
 \label{fig:fpga-inout}
 \end{figure}
@@ -372,7 +382,7 @@ The controller exposes an additional interface through a communication channel t
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{overview-inout}
+\includegraphics[width=\textwidth]{img/overview-inout}
 \caption{I/O virtualized, an overview of the FPGA development board and its exposed interfaces.}
 \label{fig:overview-inout}
 \end{figure}
@@ -391,7 +401,7 @@ In the previous section, the basic model has been extended to include a definiti
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{fpga-control}
+\includegraphics[width=\textwidth]{img/fpga-control}
 \caption{Cycle control, an overview of the FPGA and its contained logic architecture. The \texttt{clock\_enable} and \texttt{reset} signals are added to allow for cycle-accurate interaction and (re)initialization.}
 \label{fig:fpga-control}
 \end{figure}
@@ -410,16 +420,16 @@ One may argue that this approach is unfavourable, since it requires modification
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=1.5in]{clock-manipulation-enable}
-        \caption{Enable signal}
-        \label{fig:clock-manipulation-enable}
+        \includegraphics[height=1.5in]{img/clock-manipulation-gated}
+        \caption{Gated clocks}
+        \label{fig:clock-manipulation-gated}
     \end{subfigure}%
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=1.5in]{clock-manipulation-gated}
-        \caption{Gated clocks}
-        \label{fig:clock-manipulation-gated}
-    \end{subfigure}
+        \includegraphics[height=1.5in]{img/clock-manipulation-enable}
+        \caption{Enable signal}
+        \label{fig:clock-manipulation-enable}
+    \end{subfigure}%
     \caption{Controlling state transitions through a clock enable signal and a gated clock signal. FPGA's do not support gated clock signals.}
     \label{fig:clock-manipulation}
 \end{figure}
@@ -428,7 +438,7 @@ In order to make this newly developed functionality available to the experimente
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=\textwidth]{overview-control}
+\includegraphics[width=\textwidth]{img/overview-control}
 \caption{Cycle control, an overview of the FPGA development board. The controller's interface is extended with operations that allow for cycle-accurate interaction with the experiment setup.}
 \label{fig:overview-control}
 \end{figure}
@@ -453,31 +463,44 @@ In order to make this newly developed functionality available to the experimente
 
 
 
-\section{Controller Abstraction}
+\section{Board Component Abstraction}
 \label{sectioncontrollerabstraction}
+
+The controller does no longer provide an interface to the experiment setup, but acts as a proxy to control the experiment setup's interface. This does not only allow for a reuse of controlling logic, but a simplification as well, since the interface that is exposed to the controller is simplified as well.
 
 At this stage of the model's development, it supports the embedding of experiment setups defined through combinational logic as well as synchronous sequential logic. Experimenters can interact with these experiment setups through PC software that is specifically developed for the experiment setup. While the model has developed to address a number of problems encountered by experimenters, the problems experienced during development have only been addressed partially. Although an architecture for the FPGA's contained logic was developed in the previous sections, a series of dependencies can still be identified in the development process, as displayed in figure \ref{fig:dependencies-control}.  
 
 The source of these dependencies is the interface between controller and experiment setup. This interface is specific for every experiment setup. By defining a standard interface between experiment setup and controller, this dependency is removed. In the current approach, the experiment setup is considered an entity with inputs and outputs, supplemented by a clock signal, a clock\_enable signal and a reset signal. 
 
-
 \subsection{Address Space}
 %TODO zinnen verbeteren, nog redelijk vaag
+% TODO waarom is de keuze voor het model van een address space een goede keuze?
 In order to be able to provide a generic interface between controller and experiment setup logic, the experiment setup's interface is modified such that it resembles the interface of a block ram, as can be seen in figure \ref{fig:interface-experiment}. The experiment setup's signals are projected on the address space. 
 
 Losing the information about which signal is which is irrelevant to proper operation of the controller. In order for the PC software to be of any practical use however, a definition of this memory space is required, such that the individual signals can be identified from the memory space. 
+
+\subsection{Interface}
+% TODO waarom is een BRAM interface een goede keuze?
+%  - eenvoud
+% TODO wat zijn de verschillen/voordelen/nadelen t.o.v. andere businterfaces zoals wishbone, AXI etc.
+% - wishbone zou een goede optie kunnen zijn ivm open source
+% - hoge leercurve bus interfaces
+% - master slave interface is voldoende
+% - bus interfaces zijn vaak nodeloos complex
+% - begrip interface is wijdversprijd
+% - ik had niet de capaciteiten om uitgebreid de mogelijke aanvullende voordelen van een businterface te bestuderen, terwijl deze interface voldoende biedt.
 
 \begin{figure}[h]
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=1.2in]{interface-bram}
+        \includegraphics[height=1.2in]{img/interface-bram}
         \caption{Single-port block ram, derived from \cite{RAMs68}}
         \label{fig:interface-bram}
     \end{subfigure}%
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=1.5in]{interface-experiment}
+        \includegraphics[height=1.5in]{img/interface-experiment}
         \caption{Experiment setup interface}
         \label{fig:interface-experiment}
     \end{subfigure}
@@ -493,10 +516,46 @@ The experiment setup has been considered to be an entity with input output signa
 
 A simple wrapper can be computer-generated in many cases. If complex memory devices are contained within the experiment setup, a wrapper can be defined manually, using an experiment setup adapter component, address space splitters and memory interface multiplexers. 
 
-Large memory elements such as register files and block rams may be defined in HDL. During the compilation process, these elements are infered from HDL code and the FPGA's internal block rams are used. If more memory space is required however, external memory devices such as DDR RAM IC's may be required. Since these external RAM devices require a number of cycles in order to accress the data, they must be abstracted in order to be accessible from within the experiment setup logic. In order to achieve the desired effect of seeing these DDR RAM devices as block ram devices that only require a single clock cycle to operate, the controller must stall the \texttt{clock\_enable} signal until the DDR controller finishes the desired operation. 
+Large memory elements such as register files and block rams may be defined in HDL. During the compilation process, these elements are infered from HDL code and the FPGA's internal block rams are used. 
 
-\subsection{PC Software}
-A major advantage of the generic interface between the controller and experiment setup is that PC software can be developed that is no longer specifically tied to one particular experiment setup design. The controller now acts as a proxy between the PC and the experiment setup. The experiment setup is considered an address space from the PC software, no longer an entity with inputs and outputs. In order for this address space to be of any significant meaning, the PC software requires information on how the data in this address space is structured. During the wrapping process a file will be generated, describing how these experiment setup's signals are projected onto the address space. This file does not only contain information about this projection of signals, but optionally 
+% If more memory space is required however, external memory devices such as DDR RAM IC's may be required. Since these external RAM devices require a number of cycles in order to accress the data, they must be abstracted in order to be accessible from within the experiment setup logic. In order to achieve the desired effect of seeing these DDR RAM devices as block ram devices that only require a single clock cycle to operate, the controller must stall the \texttt{clock\_enable} signal until the DDR controller finishes the desired operation. 
+
+
+\subsection{Composition Process}
+In stead of the distinction between controller and experiment setup, a new separation is defined in the controller's logic architecture. A distinction is made between the logic that is targeted to a specific FPGA development board and the logic that targets the standard board component interface. Figure \ref{fig:fpga-abstract} displays this distinction. This distinction is made, because the experiment setup is no longer being defined by it's primary logic, but as secondary interfacing logic as well. 
+
+% The controller was defined to be a specific implementation embedding a specific experiment setup into a FPGA development board.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.8\textwidth]{img/fpga-abstract}
+\caption{Controller abstracted, FPGA logic design}
+\label{fig:fpga-abstract}
+\end{figure}
+
+A new process is defined for the composition of board component and experiment setup component into a bitstream file. This results in the processes of experiment setup development and board component development to become independent. Figure \ref{fig:dependencies-abstract} displays the composition process and its relation to the  development processes for experiment setup component and board development component in terms of dependencies. 
+
+\subsection{Experiment Setup Adapter}
+
+In order for an experiment setup logic to conform to the experiment setup component's interface, a component is introduced that acts as an adapter. This experiment setup adapter is a logic component that projects the experiment setup's input and output signals onto an address space. Figure \ref{fig:fpga-abstract} displays the experiment setup adapter.
+
+
+
+
+\subsection{Generic PC Software}
+A major advantage of the generic interface between the controller and experiment setup is that PC software can be developed that is no longer specifically tied to one particular experiment setup design. The controller now acts as a proxy between the PC and the experiment setup. The experiment setup is considered an address space from the PC software, no longer an entity with inputs and outputs. In order for this address space to be of any significant meaning, the PC software requires information on how the data in this address space is structured. During the wrapping process a file will be generated, describing how the experiment setup's signals are projected onto its address space. 
+
+% iets zeggen over de faciliterende interface tussen PC en 
+
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{img/overview-abstract}
+\caption{Controller abstracted, overview}
+\label{fig:overview-abstract}
+\end{figure}
+
 
 %variable address width
 %variable data width
@@ -526,7 +585,7 @@ A major advantage of the generic interface between the controller and experiment
 
 % introduction of standard interfaces removes dependencies from development process
 
-% Removing the dependency from controllerto experiment, generic interface.
+% Removing the dependency from controller to experiment, generic interface.
 
 % Allows for reuse of generic board components for different experiment setup components.
 
@@ -535,22 +594,6 @@ A major advantage of the generic interface between the controller and experiment
 % view of experiment as address space allows for easy interface from software address space allows for projection of signals as well as memory elements.
 
 
-See figure \ref{fig:fpga-abstract}.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=.8\textwidth]{fpga-abstract}
-\caption{Controller abstracted, FPGA logic design}
-\label{fig:fpga-abstract}
-\end{figure}
-
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=\textwidth]{overview-abstract}
-\caption{Controller abstracted, overview}
-\label{fig:overview-abstract}
-\end{figure}
 
 
 
@@ -575,7 +618,7 @@ Optionally, one needs to introduce device driver logic in order to allow for seq
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{overview-io}
+\includegraphics[width=\textwidth]{img/overview-io}
 \caption{I/O reintroduced, overview}
 \label{fig:overview-io}
 \end{figure}
@@ -583,7 +626,7 @@ Optionally, one needs to introduce device driver logic in order to allow for seq
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{fpga-io2}
+\includegraphics[width=\textwidth]{img/fpga-io2}
 \caption{I/O reintroduced, FPGA logic design}
 \label{fig:fpga-io}
 \end{figure}
@@ -658,7 +701,7 @@ Reset button behaviour.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.7\textwidth]{nexys4-small}
+\includegraphics[width=0.7\textwidth]{img/nexys4-small}
 \caption{Digilent Nexys 4 Artix-7 FPGA development board}
 \label{fig:nexys4}
 \end{figure}
@@ -671,14 +714,14 @@ Reset button behaviour.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{processes-dependencies-basic}
+\includegraphics[width=\textwidth]{img/processes-dependencies-basic}
 \caption{The basic model, process dependency graph}
 \label{fig:dependencies-basic}
 \end{figure}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{processes-dependencies-inout}
+\includegraphics[width=\textwidth]{img/processes-dependencies-inout}
 \caption{I/O virtualized, process dependency graph}
 \label{fig:dependencies-inout}
 \end{figure}
@@ -686,7 +729,7 @@ Reset button behaviour.
 \begin{landscape}
 \begin{figure}
 \centering
-\includegraphics[width=\hsize]{processes-dependencies-control}
+\includegraphics[width=\hsize]{img/processes-dependencies-control}
 \caption{Cycle control, process dependency graph}
 \label{fig:dependencies-control}
 \end{figure}
@@ -695,7 +738,7 @@ Reset button behaviour.
 \begin{landscape}
 \begin{figure}
 \centering
-\includegraphics[width=\hsize]{processes-dependencies-abstract}
+\includegraphics[width=\hsize]{img/processes-dependencies-abstract}
 \caption{Controller abstracted, process dependency graph}
 \label{fig:dependencies-abstract}
 \end{figure}
@@ -704,29 +747,43 @@ Reset button behaviour.
 \begin{landscape}
 \begin{figure}
 \centering
-\includegraphics[width=\hsize]{processes-dependencies-io}
+\includegraphics[width=\hsize]{img/processes-dependencies-io}
 \caption{I/O reintroduced, process dependency graph}
 \label{fig:dependencies-io}
 \end{figure}
 \end{landscape}
 
+
+
+
+
 \chapter{Logic Diagrams}
 
-\begin{figure}
+\section{Simple wrapping}
+\begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{logic-wrap-simple}
+    \includegraphics[width=\textwidth]{img/logic-wrap-simple}
     \caption{Caption}
     \label{fig:logic-wrap-simple}
 \end{figure}
 
 \begin{landscape}
-    \begin{figure}
+    \section{Advanced wrapping}
+    \begin{figure}[h]
         \centering
-        \includegraphics[width=\hsize]{logic-wrap-extended}
+        \includegraphics[width=\hsize]{img/logic-wrap-extended}
         \caption{Complex wrapper}
         \label{fig:logic-wrap-extended}
     \end{figure}
 \end{landscape}
+
+\section{Experiment Adapter}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{img/logic-wrap-simple}
+    \caption{Caption}
+    \label{fig:logic-experiment-adapter}
+\end{figure}
 
 \cleardoublepage
 
