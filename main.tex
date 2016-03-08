@@ -20,7 +20,7 @@
 % Title Page
 \title{A model for \\experiment setups on\\ FPGA development boards}
 \author{Matthijs Bos}
-\supervisors{Toto van Inge (UvA), Taco Walstra (UvA), Edwin Steffens (UvA)}
+\supervisors{Anthony van Inge (UvA), Taco Walstra (UvA)}
 \signedby{n.a.}
 
 
@@ -236,6 +236,10 @@ TODO uitleggen waarom synchronous sequential logic niet werkt op FPGAs. Timing s
 
 \chapter{Model}
 
+% TODO Toto: verdient een introductie. waarom ga je het model in stages opbouwen? waarom wordt er een limiting factor gezien? 
+% TODO Duidelijkere verwijzing naar problem statement. Een uitgewerkte problem statement is ook een goed idee.
+
+
 This chapter will propose a model that provides a theoretical solution to the problem statement as described in section \ref{sectionproblemstatement}. This model addresses the problem statement from a technical and architectural point of view, as well as how user processes are affected. As a starting point, a description of a basic model for experiment setups on FPGA development boards is given in section \ref{sectionbasicmodel}, which is then extended and modified through a series of stages. In every stage, a particular aspect of the problem statement is addressed, forming a complete solution eventually. 
 
 In section \ref{sectionvirtualizingio} the possible limiting factor of the  number of I/O devices on the FPGA development board is addressed by introducing the concept of a controller. This controller provides the experiment setup logic with a variable amount of virtual I/O channels. The levels of these I/O channels can then observed and controlled through controller-specific PC software. All of the physical I/O devices are temporarily removed from the model, as well as most of the FPGA's other peripheral devices.
@@ -246,58 +250,17 @@ In section \ref{sectioncontrollerabstraction} the experiment controller's interf
 
 In section \ref{sectionreintroducingio} the FPGA development board's physical I/O devices are reintroduced into the model, after being removed from the model in section \ref{sectionvirtualizingio}. This step is essential in enabling a student's physical view of the experiment setup and providing a hands-on experience. The development of experiment setups remains an independent process.
 
-% The model addresses the following aspects of hosting hardware experiment setups on FPGA development boards:
-% \begin{itemize}
-% \item FPGA development board independence
-% \item Abstraction of FPGA (development board) manufacturers 
-% \item distribution format for experiment setups
-% \item Reuse of components 
-% \item ease of development
-% \item ease of use for students
-% \end{itemize}
 
-% Advantages
-% \begin{itemize}
-% \item Controller abstraction results in experiment setups to be FPGA development board independent
-% \item Controller abstraction results in the simplification of design considerations for instructors when developing experiment setups. Instructors only need to consider the experiment setup-controller interface when developing experiments. 
-% \item Controller abstraction leads to generalization of testing and verification tools used for experiment setup development
-% \item A generic format for experiment setups allows for easy interexchange of experiments
-% \item Clear separation of concerns
-% \item Abstraction of development boards allows for reuse of board/controller hardware components. 
-% \item clear definitions of information exchange formats for experiment setups, board packages, and deployable distributables. 
-% \item Generalization of components of the model leads to reuse
-% \item Interface of abstract experiment setup is same as generic memory element/block ram, allowing for reuse of exisiting technology. 
-% \end{itemize}
-
-% Disadvantages
-% \begin{itemize}
-% \item Only supports combinational and synchronous sequential logic
-% \item Instructors need to implement 'clock\_enable' signal.
-% \item Additional complexity is introduced into the toolchain
-% \item Abstraction of I/O devices results in loss of functionality and overhead in addressing them as combinational devices. Some functionality of the development board is lost. For example, real-time sensor measurements are impossible on low frequencies. 
-% \end{itemize}
-
-% In this section, a basic model is introduced. This model is extended in a series of steps, eventually resulting in this thesis' proposed model.
-% \begin{itemize}
-% \item Interface
-% \item Architecture
-% \item Workflow
-% \end{itemize}
-
-% Development board requirements
-% \begin{itemize}
-% \item FPGA that is supported by toolchain
-% \item FPGA development board programming interface is supported by student toolchain
-% \item Serial communication interface on FPGA development board
-% \item (optional) Human interface I/O devices
-% \end{itemize}
-
-% The proposed models is supposed to allow for FPGA development boards to provide students a hands-on experience in their hardware logic experiments.
 
 \section{The Basic Model}
 \label{sectionbasicmodel}
 
+% TODO er worden een aantal zaken gepresenteerd waarvan een verwijzing ontbreekt. Hoewel er geen 1-1 verwijzing is in een aantal gevallen, kun je wel verwijzen naar de stukken op basis waarvan de gepresenteerde informatie is dedistileerd. 
+
+% TODO in figuren en tekst onderscheid maken tussen I/O, HID, peripheral, communication device.
+
 As a starting point, a description of a basic model for experiment setups on FPGA development boards is given. An overview of the basic model is displayed in figure \ref{fig:overview-basic}. The model features a PC and a FPGA development board as the two primary physical components. An interface between the PC and the FPGA development board exists over which the board exposes the \texttt{Board.Program()} operation. This operation initializes the FPGA by loading the contents of a FPGA-specific bitstream file and configuring the FPGA's components. The physical and electrical characteristics of this interface are considered to be irrelevant and may even be a process that involves manual user operations, such as transferring a memory card.
+
 
 \begin{figure}[h]
 \centering
@@ -332,6 +295,8 @@ Experiment setup developers are responsible for the design, implementation, test
     \label{fig:process-development-basic}
 \end{figure}
 
+
+% TODO onderstaande opsomming is beter op zijn plaats in de problem statement.
 As shown below, an experiment setup developer must have knowledge of a significant number of subjects and technologies: 
 
 \begin{itemize}
@@ -364,6 +329,13 @@ Including the PC as a tool for observation and interaction requires additional k
 
 \section{Virtualizing I/O}
 \label{sectionvirtualizingio}
+
+% TODO In deze sectie verduidelijken dat state control nog niet mogelijk is en dat interne state alleen inzichtelijk kan worden gemaakt door expliciet signalen naar buiten te brengen in het experiment ontwerp.
+
+% TODO Er wordt een externe user interface gepresenteerd als oplossing. Hoe ziet deze er uit?
+
+% TODO: Toto: zijn er geen downsides van het gebruik van software?
+
 Regular FPGA development boards offer a limited set of I/O devices. As a consequence, this allows for observation and control of experiment setup logic entities with a limited number of input and output signals. Embedding entities with a large number of inputs and outputs however, requires a different approach. 
 
 In order to support experiment setup entities with a large number of input and output signals, the basic model's logic architecture is extended through introduction of the controller. Figure \ref{fig:fpga-inout} gives an overview of the FPGA and the newly defined architecture. The experiment setup entity's inputs and output signals are available to the controller only, but both components still share a common clock signal. The signal levels of the FPGA's peripheral devices are no longer driven by the experiment setup entity. Following the previous section's criteria, these devices are considered irrelevant and thus removed from the model. Only the clock generating device and a single machine-machine communication device remain part of the model. 
@@ -396,6 +368,11 @@ Experiment setup interaction through dedicated PC software will simplify the exp
 
 
 \section{Cycle control}
+
+% TODO: Taco: Toch eens onderzoeken wat voor mogelijkheden clock domains bieden, mogelijk beschrijven in chapter background.
+
+% TODO: Timing diagram ter verduidelijking clock_enable
+
 \label{sectioncyclecontrol}
 In the previous section, the basic model has been extended to include a definition of the controller. This controller allows for the embedding of experiment setup entities with an arbitrary number of input and output signals that are defined through combinational logic. FPGAs in general lack practically useful support for containment of asynchronous sequential logic, but the availability of a clock signal in the current model does provide support for experiment setup entities that are defined through synchronous sequential logic. However, this clock signal is constant and cannot be varied in speed or temporary stopped. Embedding an experiment setup entity of synchronous sequential logic at this stage of the model would result in an uncontrollable situation of continuous state changes at high speed. This limited control over the clock signal is due to the nature of how FPGAs work and prevents cycle-accurate interaction with the experiment setup. In order to be capable of cycle-accurate observations and control over synchronous sequential experiment setup logic, the model requires further extension.
 
@@ -466,9 +443,16 @@ In order to make this newly developed functionality available to the experimente
 \section{Board Component Abstraction}
 \label{sectioncontrollerabstraction}
 
-The controller does no longer provide an interface to the experiment setup, but acts as a proxy to control the experiment setup's interface. This does not only allow for a reuse of controlling logic, but a simplification as well, since the interface that is exposed to the controller is simplified as well.
+% TODO: Taco: Hoe ga je de inhoud van complexe memory devices inzichtelijk maken?
 
-At this stage of the model's development, it supports the embedding of experiment setups defined through combinational logic as well as synchronous sequential logic. Experimenters can interact with these experiment setups through PC software that is specifically developed for the experiment setup. While the model has developed to address a number of problems encountered by experimenters, the problems experienced during development have only been addressed partially. Although an architecture for the FPGA's contained logic was developed in the previous sections, a series of dependencies can still be identified in the development process, as displayed in figure \ref{fig:dependencies-control}.  
+% TODO: Taco: Wordt de experiment setup adapter gegenereerd?
+
+% TODO: Taco gaat er van uit dat de experiment setup adapter de top component is.
+
+% TODO: Taco: Uiteindelijke functionele omschrijving controller ontbreekt nog
+
+% At this stage of the model's development, it supports the embedding of experiment setups defined through combinational logic as well as synchronous sequential logic. Experimenters can interact with these experiment setups through PC software that is specifically developed for the experiment setup. 
+While the model has developed to address a number of problems encountered by experimenters, the problems experienced during development have only been addressed partially. Although an architecture for the FPGA's contained logic was developed in the previous sections, a series of dependencies can still be identified in the development process, as displayed in figure \ref{fig:dependencies-control}.  
 
 The source of these dependencies is the interface between controller and experiment setup. This interface is specific for every experiment setup. By defining a standard interface between experiment setup and controller, this dependency is removed. In the current approach, the experiment setup is considered an entity with inputs and outputs, supplemented by a clock signal, a clock\_enable signal and a reset signal. 
 
@@ -478,6 +462,8 @@ The source of these dependencies is the interface between controller and experim
 In order to be able to provide a generic interface between controller and experiment setup logic, the experiment setup's interface is modified such that it resembles the interface of a block ram, as can be seen in figure \ref{fig:interface-experiment}. The experiment setup's signals are projected on the address space. 
 
 Losing the information about which signal is which is irrelevant to proper operation of the controller. In order for the PC software to be of any practical use however, a definition of this memory space is required, such that the individual signals can be identified from the memory space. 
+
+The controller does no longer provide an interface to the experiment setup, but acts as a proxy to control the experiment setup's interface. This does not only allow for a reuse of controlling logic, but a simplification as well, since the interface that is exposed to the controller is simplified as well.
 
 \subsection{Interface}
 % TODO waarom is een BRAM interface een goede keuze?
@@ -564,10 +550,8 @@ A major advantage of the generic interface between the controller and experiment
 % - nog niet mogelijk snel te switchen
 % docenten
 % - afhankelijkheden tijdens ontwikkelproces.
-% - 
 
 % het is nog niet mogelijk te interfacen met complexe state devices in 
-
 
 % Developed experiment setups are still board-specific
 

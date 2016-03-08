@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{template/uva-bachelor-thesis}[2005/06/10 Version 0.1 Rein van den Boomgaard]
+\ProvidesClass{uva-bachelor-thesis}[2005/06/10 Version 0.1 Rein van den Boomgaard]
 \RequirePackage{graphicx}
 
 
@@ -44,7 +44,7 @@
 	\end{textblock*}
 	\begin{textblock*}{10cm}(6cm,9cm)
 		\noindent
-    	\includegraphics[height=9cm]{template/model-engine-white}
+    	\includegraphics[height=9cm]{model-engine-white}
 	\end{textblock*}
 	\begin{textblock*}{10cm}(6cm,18cm)
 		\noindent
