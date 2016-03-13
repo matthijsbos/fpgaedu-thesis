@@ -29,7 +29,7 @@
 \usepackage[absolute,overlay]{textpos}
 \usepackage{rotating}
 \renewcommand{\maketitle}{%
-    \hyphenpenalty 10000
+    % \hyphenpenalty 10000
 	\thispagestyle{empty}
 	\hspace*{1em} 	% a fake element on the page (else texpos absolute option
 			% doesn't work)
