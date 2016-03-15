@@ -177,17 +177,62 @@ Many others develop their own instruction set/computer architecture that is not 
 % #############################
 \newpage
 \section{Problem Statement and Related Work}
-In their teaching of the subject of computer architecture and organization at the University of Amsterdam (UvA), the course instructors see an opportunity for improvement through introduction of FPGA development boards as a tool for experimentation during practical exercises. The course instructors sense the need for a hands-on approach in teaching their subjects, also noted in \cite{cifredo2015computer, oztekin2011bzk}. Computer science students lack experience with physical hardware, an observation also made in \cite{el2011teaching}. 
+In their teaching of computer architecture and organization at the University of Amsterdam's (UvA) department of computer science, the course's instructors see an opportunity for improvement through introduction of FPGA development boards as a tool for experimentation during practical exercises. The instructors sense the need for a hands-on approach in teaching their subjects, also noted in \cite{cifredo2015computer, oztekin2011bzk}. Computer science students lack experience with physical hardware, an observation also made in \cite{el2011teaching}. The course is taught early in the first year of undergraduate students over a period of two months, so students are not expected to have any academic experience in the field of computer science. 
+
+% TODO de notie lack of experience with physical hardware verdient nog wel wat extra aandacht. 
+% TODO dit moet ook het gebruik van simulators diskwalificeren
+
+% TODO de docenten willen een laagdrempelige oplossing voor eerstejaars studenten
 
 FPGAs have been applied in the teaching of computer architecture and organization in the electrical engineering curricula of \cite{jansen2014every, oztekin2011bzk, el2011teaching, pereira2012basic}, in the computer engineering curricula of \cite{cifredo2015computer, kellett2012project, el2011teaching, pereira2012basic, lee2012pipelined, oztekin2011bzk} and in the computer science curricula of \cite{bulic2013fpga, el2011teaching, pereira2012basic, lee2012pipelined}. In a number of cases, various improvements were observed as a result of the use of FPGAs. In \cite{paharsingh2009novel} an increased student pass rate, student score and student evaluation were observed. In \cite{oztekin2011bzk} students have reported an increased learning experience. In \cite{cifredo2015computer} students have reported an increased interest in the subject matter. In \cite{bulic2013fpga, cifredo2015computer} students have reported an increased insight into the subjects taught. 
 
-% TODO uitbreiden over verschil tussen de drie curricula, in onderstaande sectie valt het nogal uit de lucht.
+Although computer architecture and organization is part of the curricula of electrical engineering, computer engineering and computer science students, their place is different in each curriculum. 
+For electrical engineering students, digital systems are the final station in terms of abstraction. For computer science students, its the start of the journey. Computer engineering sits in between. Computer architecture and organization is covered in all three curricula. The UvA's instructors aim to shift the course's focus to the abstract aspects of digital systems, such as instruction-level parallelism and caching strategies in computer architectures. The instructors find a higher-level level view of digital systems on a register-transfer level and an instruction level to be more in line with a computer science student's curriculum. Only a basic understanding of lower-level subjects such as digital design and electronic is pursued. In their decision the istructors follow a trend that was observed in \cite[p. 205]{cs2013final}: a de-emphasis of digital design in computer science curricula. Deep coverage of digital design is considered to more appropriate in the curricula of electrical engineering and computer engineering. 
 
-In their practical sessions, the UvA's course instructors aim to focus on the abstract aspects of digital systems, such as instruction-level parallelism and caching strategies in computer architectures. A higher-level level view of digital systems on a register-transfer level and an instruction level is more in line with a computer science student's curriculum, as opposed to lower-level representations of these systems, such as a gate-level view. The computer architecture and organization course's contents are based on the works of Hennessy and Patterson \cite{hennessy2013computer} which considers the design process of a microprocessor from a higher-level view. In their work there is a significant focus on the numerical analysis of decisions made in that process. The instructors' intended goal for their practical sessions is to allow students to analyse the implications of these higher-level design decisions through experimentation. As also noted in \cite{paharsingh2009novel}, students who have not experimented with abstract subjects such as pipelining and caching show lower test scores in these areas.
+The computer architecture and organization course's contents are based on the works of Hennessy and Patterson \cite{hennessy2013computer} which considers the design process of a microprocessor from a higher-level view. In their work there is a significant focus on the numerical analysis of decisions made in that process. The instructors' intended goal for their practical sessions is to allow students to analyse the implications of these higher-level design decisions through experimentation. As also noted in \cite{paharsingh2009novel}, students who have not experimented with abstract subjects such as pipelining and caching show lower test scores in these areas.
 
-Known methods for teaching computer architecture and organization using FPGAs, such as \cite{paharsingh2009novel, el2011teaching, nakano2008processor, al2007teaching, kellett2012project, jansen2014every, lee2012pipelined, pereira2012basic, cifredo2015computer} focus on implementation and validation. Students are encouraged to make decisions in their designs, but are not asked to evaluate the effects of these decisions in comparison to other approaches. Due to the complexities involved in implementing a computer architecture, students are limited to simple projects. These projects include implementation of single-cycle and simple multi-cycle machines which are limited in instruction sets and applied optimizations. The UvA's course instructors believe that these methods suffice in the teaching of basic computer architecture concepts, but are insufficient in explaining more complex subjects to students, due to the limitation that students are required to make their own implementations.  
+Known methods for teaching computer architecture and organization using FPGAs, such as \cite{paharsingh2009novel, el2011teaching, nakano2008processor, al2007teaching, kellett2012project, jansen2014every, pereira2012basic, cifredo2015computer} focus on implementation and validation. Students are encouraged to make decisions in their designs, but are not asked to evaluate the effects of these decisions. Due to the complexities involved in implementing a computer architecture, students are limited to simple projects. These methods feature implementation of single-cycle machines which are limited in instruction sets and applied optimizations. 
+% TODO bovenstaande claim checken in papers
+The UvA's course instructors believe that these methods suffice in the teaching of basic computer architecture concepts, but are insufficient in explaining more complex subjects to students, due to the limitation that students are required to make their own implementations.
 
-In \cite{el2011teaching, nakano2008processor, kellett2012project, jansen2014every, pereira2012basic, paharsingh2009novel, cifredo2015computer} students were required to be famil/iar or to familiarize themselves with the concepts of HDL programming. The explicit goal is not to burden students with the required skill of HDL programming. 
+% TODO nog vertellen dat het hier om een wat complexere implementatie gaat, maar benadrukken dat het nnog steeds beperkt is.
+In \cite{lee2012pipelined} a method is presented in which students focus on the implementation of a pipelined MIPS architecture. Although students manage to create a working design over a period of two months, more advanced optimizations are omitted from the project due to a lack of time. Furthermore, no attention is paid to other subjects such as caching and I/O, as well as analysis of results. 
+The methods that focus on implementation are better suited to the curricula of electrical engineering and computer engineering, since many of the skills required are taught as a part of these. 
+
+
+De docenten willen een oplossing zoals in \cite{holland2003harnessing}  \cite{bulic2013fpga} MIPSfpga as part of \cite{mipsfpga}
+
+% FPGA's zijn in de visie van de docenten geen onderwijsdoel, maar een onderwijsmiddel
+
+% Implementation puts a great burden on students due to the knowledge required and the time spent during development and testing. 
+
+% in \cite{lee2012pipelined} zeggen ze juist dat een benadering zonder implementatie studenten demotiveert
+
+% TODO soms zijn de practica juist beperkt tot instruction level en niet lager
+
+Due to the focus on implementation in these methods, students are also required to familiarize themselves with the concepts of HDL programming. Current methods assume HDL programming skills \cite{jansen2014every} or aim to teach them simultaneously. 
+
+% TODO De verschillende aanpakken laten zien dat het simpelweg niet mogelijk is om binnen twee maanden studenten vertrouwd te laten raken met HDL programming, FPGA's, digital design en de complexere aspecten van computerarchitectuur. Studenten vervolgens een serie implementaties te laten maken waarbij de verschillende implementaties met elkaar worden vergeleken in experimenten die de studenten zelf hebben ingericht. Dit beslaat bijna het hele curriculum van electrical engineers, en zelfs daar komen ze nog niet eens aan complexe ontwerpen. Studenten worden zo te veel afgeleid van de zaken waar het echt om gaat.
+
+Current methods involving are targeted at experienced students.  
+
+First-year students \cite{cifredo2015computer}
+Second-year students \cite{lee2012pipelined}
+third-year students\cite{kellett2012project}
+undergraduate \cite{}
+graduate \cite{nakano2008processor} \cite{jansen2014every} 
+
+
+Cifredo-Chaco\'on et al.  \cite{cifredo2015computer} observe that first-year students struggle in the adoption of HDL programming concepts. 
+
+Third-year undergraduate course on programmable logic \cite{kellett2012project}
+FPGAs and VHDL are taught to master students \cite{pereira2012basic}
+VHDL and FPGAs taught to third-year undergraduate students already familiar with the topics of digital design and microcontroller design \cite{kellett2012project}. VHDL and FPGAs as part of their masters level education \cite{jansen2014every, pereira2012basic}
+
+
+
+
+
 
 
 
@@ -394,6 +439,8 @@ In order to support experiment setup entities with a large number of input and o
 \caption{I/O virtualized, an overview of the FPGA and its contained logic architecture. The controller embeds the experiment setup logic into the FPGA.}
 \label{fig:fpga-inout}
 \end{figure}
+
+% Concept controller ook te zien in \cite{jansen2014every}
 
 The controller is a component that acts as an intermediary between the experiment setup logic and an experimenter's PC. The experiment setup's state is observed and controlled through controller-specific software, a method also presented in \cite{holland2003harnessing} and \cite{bulic2013fpga}. A hardware-based method to observe and control the experiment setup's state is described in \cite{al2007teaching}. A software-based solution however, does not increase the cost of the experiment. Furthermore, a software-based approach will allow for more flexibility, as shown in the following sections. 
 
