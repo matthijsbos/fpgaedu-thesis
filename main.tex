@@ -57,144 +57,20 @@ Utilizing FPGAs however, is a complex task that requires a specific set of skill
 
 This thesis presents a generic solution that allows for students to utilize FPGAs in their lab experiments without the requirement of these more advanced skills. Experiments are performed using a Digilent Nexys 4 FPGA board, connected to a PC. An implementation is provided and validated through a number of experiments in which multiple variants of Hennessy and Patterson's MIPS computer architecture are running on an FPGA. The scope of this thesis is limited to a technical solution and does not evaluate the didactic effects of a hands-on approach in the teaching of these subjects.
 
-% \section{Related work}
-% Traditionally, computer architecture and organization lab experiments make use of virtual environments in the form of simulators. Many of these simulators exist, each with a different scope and level of detail. In particular, computer architecture simulators are used, which simulate the behaviour of a microprocessor. Some simulators such as the SPIM MIPS simulator \cite{spim} only feature a simulation of the instruction set and register state, while others provide a cycle accurate simulation of a specific microprocessor implementation, allowing for accurate evaluation of performance metrics. For their computer architecture and organization lab experiments, the UvA's course instructors makes use of the SIM-PL simulation environment \cite{simpl}, which was developed at the UvA. The SIM-PL simulator allows for a cycle-accurate simulation of the execution of a particular computer architecture that is implemented using digital design primitives through a graphical interface.
 
-% FPGAs have been used in the courses of other universities' curricula before, including the teachings of the subject of computer architecture and organization. 
-
-% %Masters or late bachelor curriculum
-% Jansen and Dusch \cite{jansen2014every} present a method that teaches electrical engineering master students to apply their available knowledge of HDL programming and digital electronics in order to implement and verify different parts of a microprocessor in VHDL. At the end of the course, students combine their previous results into a working microprocessor in order to produce a working system which is programmed onto a FPGA. After achieving a working setup on a FPGA, students are required to test their work by writing and running a simple c program. The course instructors provide the tools and a simple operating system in order to compile and run the student programs. 
-
-% In the works of Cifredo-Ch\'acon et al. \cite{cifredo2015computer}, a teaching method is presented which provides first-year computer engineering students a more practical experience in the teachings of computer architecture and organization, as well as an introduction into the subject of VHDL programming. The lectures are combined with lab activities in which students perform experiments using VHDL and a FPGA development board. 
-% In their conclusions, the instructions observe the positive effects of a hands-on approach. As a weakness in their approach however, the instructors detect the difficulty students experience in adopting the parallel behaviour of VHDL as opposed to the familiar, imperative style of programming. 
-
-% In their teaching of the subjects of digital design, Pereira et al. \cite{pereira2012basic} make use of BIP, a simple computer computer architecture that is applied in both bachelor and master curricula. Bachelor students are introduced to the subject of digital circuit design through schematic implementation of parts of the computer architecture. Their work is validated in a simulator. In a digital systems design course, master students are given the task of providing a VHDL implementation of the computer architecture, validate their work through simulation and finally synthesize and run their work on a FPGA. 
-
-% In order to provide students with a hand-on experience, El-Din and Krad \cite{el2011teaching} incorporate FPGAs in their computer architecture labs. Over the course of four lab sessions students are introduced into the use of FPGAs and their design software. Students are then required to model an ALU and verify its behaviour through simulation. A FPGA is then used to verify the ALU's behaviour in real life. 
-
-
-
-% Holland et al. \cite{holland2003harnessing} present a solution in which a FPGA development board is used in collaboration with a student's pc in order to allow for debugging of internal microprocessor signals. A MIPS-based single-cycle as well as a pipelined microprocessor is programmed onto a FPGA development board and can be monitored and controlled through a graphical interface on the PC. A similar approach is presented in the works of Buli\'c et al. \cite{bulic2013fpga}, which offers a pipelined . 
-
-% Xing et al. \cite{xing2008fpga} describe a method in which FPGAs can be applied in order to perform experiments on a variety of multi-core system configurations. 
-
-% \section{Problem statement}
-% \label{sectionproblemstatement}
-
-% In order to provide students with a hand-on approach, FPGAs have been applied in labs of computer architecture and organization in curricula of electrical enginering \cite{jansen2014every, oztekin2011bzk, el2011teaching, pereira2012basic}, computer engineering \cite{cifredo2015computer, kellett2012project, el2011teaching, pereira2012basic, lee2012pipelined, oztekin2011bzk} and computer science \cite{bulic2013fpga, el2011teaching, pereira2012basic, lee2012pipelined}. In electrical engineering curricula, the subject is taught as a means to provide students a top-down view \cite{jansen2014every}. Moving into the area of computer engineering and computer science, the subject serves as a means to reinforce a student's understanding of a computer's underlying hardware \cite{cifredo2015computer, el2011teaching, lee2012pipelined}. 
-
-% Labs are based on development boards and software from either Xilinx \cite{al2007teaching, wang2011bridging, nakano2008processor, paharsingh2009novel, bulic2013fpga} or Altera \cite{xing2008fpga, oztekin2011bzk, lee2012pipelined, el2011teaching, kellett2012project, jansen2014every}.
-
-% % \cite{jansen2014every, cifredo2015computer, pereira2012basic, el2011teaching, holland2003harnessing, paharsingh2009novel, bulic2013fpga, kellett2012project}.
- 
-% A more hand-on approach is required \cite{cifredo2015computer, oztekin2011bzk}
-
-% FPGAs are used in a late stage of the course in order to let students' verify their work \cite{wang2011bridging}.
-
-% El-Din and Krad \cite{el2011teaching} recognise that computer science students lack experience with physical hardware. 
-
-% Many have seen increased student scores as the result of the adoption of a hand-on experience in their labs.
-
-% Increased pass rate and score \cite{paharsingh2009novel}
-
-% Increase in student evaluation \cite{paharsingh2009novel}
-
-% incresed learning experience \cite{oztekin2011bzk}. Increased interest \cite{cifredo2015computer}
-
-% Increased insight \cite{bulic2013fpga, cifredo2015computer}
-
-
-% Many educational programs assume HDL programming skills \cite{jansen2014every} or teach them as part of their curricula, while others teach aim to teach HDL programming as part of their courses.  Cifredo-Chaco\'on et al.  \cite{cifredo2015computer} observe that first-year students struggle in the adoption of HDL programming concepts. 
-
-% Third-year undergraduate course on programmable logic \cite{kellett2012project}
-
-% FPGAs and VHDL are taught to master students \cite{pereira2012basic}
-
-% VHDL and FPGAs taught to third-year undergraduate students already familiar with the topics of digital design and microcontroller design \cite{kellett2012project}
-
-% VHDL and FPGAs as part of their masters level education \cite{jansen2014every, pereira2012basic}
-
-% The subject of computer architecture and organization is taught different to electrical engineering students as opposed to computer science/computer engineering students \cite{calazans2001integrating}. OLD SOURCE.
-
-% Students that have not experimented with more abstract subjects such as pipelining and caching show lower test scores \cite{paharsingh2009novel}
-
-% Approach focused around a specific implementation of an instruction set. 
-
-% Many educational computer architectures have been developed for this purpose. The instruction set is often reduced of simplified. 
-
-% Approach where students build their own CPU throughout the course. The focus is on implementation and not on experiments with these implemented computer architectures. More low level approach, not so much a high level approach in which students are encouraged to evaluate the effects of high-level strategical decisions. 
-
-% VHDL programming exercises are limited to simple exercises such as implementing an ALU \cite{el2011teaching} or implementing a very limited microprocessor \cite{nativeFPGA}. 
-
-% FPGAs are not suitable for an experimental way to learn VHDL, since is requires at least some minutes to synthesize, implement and program a design every time a change is made to the code. Simulators are more suited for this purpose. 
-
-% FPGA applied more in electrical engineering or computer engineering curricula.
-
-% * to HDL compilers
-
-% Many others develop their own instruction set/computer architecture that is not compatible with H\&P.
-
-
-
-
-% \section{Problem Statement and Related Work}
-% FPGA's have seen successful application in a number of fields, ranging from industry to academic research. Education has been one of these fields as well, for 
-
-
-% a number of the FPGA development board is not very well suited for application in classrooms where it serves as a tool to aid the student in its understanding of the subject matter of digital circuits and systems. This is mainly due to the fact that FPGAs are complex devices and most of current methods require the student to acquire or have knowledge on the subjects of FPGA development and HDL modelling. Furthermore, there currently exist no tools that aid instructors in the development and sharing of experimental setups for use in their lectures. 
-
-% Most existing methods that incorporate FPGA development boards in their experiments require students to familiarize themselves with the FPGA development process, as well as HDL programming. These topics however, are often beyond the scope of curricula of Computer Science and Software Engineering, putting these methods outside the reach of many students. Exisiting methods often consider FPGA development to be a primary educational goal, in stead of being a means to teach other subjects. By requiring students to acquire knowledge on these topics, a lot of available time is consumed by matters other than the actual goal. 
-
-% HDL programming concepts are often misunderstood by students participating in entry level courses. HDL modelling and FPGAs are often considered an advanced topic, taught in a later stage of the curriculum. 
-
-
-% \section{Problem Statement and Related Work}
-
-% beschrijf het probleem: er zijn op dit moment geen methoden die eerstejaars studenten in staat stelt door middel van FPGAs een fysieke indruk te krijgen van de hardware waar zij mee experimenteren in practica. Dit komt in ieder geval niet naar voren in de volgende papers....
-
-% De oplossing hiervoor is volgens de docenten het volgende: Men wil een technische oplossing die studenten zonder technische kennis van FPGA's en HDL programmeren in staat stelt FPGA's te gebruiken tijdens practica. Deze vaardigheden vallen immers buiten het curriculum van de informaticaopleiding. Bovendien weet ik uit eigen ervaring hoe moeilijk het is om FPGA en HDL programmeren onder de knie te krijgen. Experimenten moeten snel en eenvoudig uitwisselbaar zijn alsof de FPGA alleen maar een container is die de logica inbed. Zo kan zonder veel kosten een serie experimente worden uitgevoerd op verschillende (variaties van) hardware. Veel methoden zien de beheersing van het ontwikkelproces voor FPGA's als een onderwijsdoel, maar dat is volgens de docenten niet de bedoeling. Het gaat hen meer om de observeerbaarheid van complexe opstellingen en de interactie om vervolgens een diepgaande analyse te kunnen doen van de resultaten. De huidige methoden beperken zich toch vaak tot relatief eenvoudige experimenten en richten zich meer op implementatie.
-
-% Verder vinden ze FPGA's een geschikt middel, dit wordt ondersteund door de volgende papers:....  Bovendien maakt een hardwarecomponent het onderwijs aantrekkelijker en uit literatuur blijkt dat het inzetten van FPGA's leidt tot verbeterde leerprestaties. FPGA's zijn dus in de basis een geschikt middel voor onderwijs: ze zijn goedkoop, flexibel inzetbaar. Ook beter dan simulaties, omdat je een hands-on ervaring hebt, wat volgens de docenten beter is dan een virtuele oplossing. I.t.t. ASICs zijn FPGAs flexibel en zouden de ontwikkelkosten van een practicum veel hoger liggen. 
-
-% Voortbordurend op wat de docenten als oplossing voor zich zien, zie ik verder het volgende: Het ontwikkelproces is erg omslachtig en vereist veel kennis. Bovendien zijn er geen standaardcomopnenten en zijn er momenteel geen methoden die het werk verdeeld volgens specialisme. Niet alleen het experimenteren vereist volgens de huidige methoden veel kennis van FPGA's maar ook het ontwikkelproces vereist onnodig veel vaardigheden. Fundamenteler: de huidige modellen die bestaan voor het gebruik van FPGA's zijn ongeschikt voor onderwijs. Om de bovengenoemde problemen op te lossen moet er eerst nagedacht worden over een model dat zowel studenten als docenten in staat stelt effectief FPGA's in te zetten als gereedschap voor experimenten. Ook moet dit model een oplossing bieden voor het gebrek aan uitwisselbaarheid van experimenten. Docenten ontwikkelen nu wel wat, maar hun werk is totaal niet gestandaardiseerd. Het meeste werk is specifiek gericht op een bepaald stuk hardware en soms is er een specifiek stukje copmutersoftware bijgeschreven. Door het gebrek aan standaarden is het ook moeilijk om experiment opstellingen op een juiste manier te kunnen delen met anderen, terwijl ontwikkeling voor FPGAs juist een grote investering vereist op het gebied van 
-
-% Poging twee:
-
-% De docenten van computerarchitectuur en organisatie van de UvA zien een kans voor de toepassing van FPGAs in de practica van hun vak. Een fysieke component in de practica biedt kansen om het begrip onder studenten te vergroten en het onderwijs aantrekkelijker te maken. Dit wordt ondersteund door de waarnemingen in papers (...). De docenten willen studenten op een hoog abstractieniveau met hardware laten experimenteren, bijvoorbeeld een computerarchitectur met of zonder pipelining. Niet alleen willen zij de studenten inzicht geven in de werking van deze technieken, maar de studenten ook daadwerkelijk laten meten aan de hardware. In deze sectie is het van belang dat de visie en eisen van de docenten worden verduidelijkt en ondersteund met argumenten.
-
-% ... vervolgens een overview van related work... De conclusie: de huidige methoden zijn vaak gericht op implementatie in HDL, vereisen kennis van HDL. Studenten zijn vaak ouderejaars met meer ervaring. Voor studenten electrical engineering is het het eindstation, terwijl het voor copmuter science studenten de basis is. HDL programmeren is te moeilijk voor eerstejaars studenten... etc, etc, etc, nog een hele rits argumenten waarom deze methoden niet aansluiten bij de wensen van de docenten van de UvA. In de basis zou het mogelijk zijn de experimenten uit te voeren op een manmier zoals de docenten dat willen, maar het vereist een enorme investering vooraf van studenten wat betreft tijd die ze moeten investeren om uiteindelijk een paar cijfers uit het experiment te krijgen. De development tools zijn hier ook niet echt op uitgerust. Dit zijn vooral debugging tools. 
-
-% Er zijn wel een paar voorbeelden van methoden die voor een deel het doel van de docenten ondersteunen: holland en bulic en mipsfpga. Echter zijn dit oplossingen die veelal rond 1 fixed computerarchitectuur zijn gebaseerd. Studenten krijgen hierdoor vooral inzicht in de werking en kunnen wat programmatjes draaien op echte hardware. Er kunnen ook wel experimenten op worden uitgevoerd en wat metingen worden verricht, maar het zijn statische architecturen. Er kan vervolgens niet een aanpassing in de architectuur worden gedaan om vervolgens de impact daarvan te meten. 
-
-% De manier van experimenteren sluit niet aan bij de wensen van de docenten, maar om te bereiken wat de docenten willen is het ook erg omslachtig om experimenten te ontwikkelen. Het is veel werk om een experiment te ontwikkelen. Er zijn geen standaarden of standaardcomponenten die dit vergemakkelijken. Het delen van experimenten is erg moeilijk omdat de experimenten vaak specifiek gebouwd zijn voor één specifiek bordje. Een experiment aanpassen aan nieuwe hardware vereist vervolgens weer veel werk.  Ook is bij een docent veel kennis vereist voor het ontwikkelen van een dergelijk experiment. Dat maakt dat het dat de ontwikkeling van een experiment op dit moment een grote investering in tijd en kennis vereist.
-
-% Om het ontwikkelproces te vergemakkelijken moet er een nieuw ontwikkelmodel worden bedacht waarbij het mogelijk wordt dat docenten niet elke keer het wiel opnieuw uitvinden. Zij moeten zich bezig kunnen houden met de ontwikkeling van experimenten en niet met de randzaken die voor elk specifiek bordje weer anders zijn. Het ontwikkelproces moet op deze manier minder kennis en tijd kosten. Verder moet het gemakkelijk zijn om experimenten te kunnen delen zonder dat het experiment moet worden aangepast aan een nieuw bordje.  
-
-
-
-% #############################
-% ## Final Problem Statement ##
-% #############################
 \section{Problem Statement and Related Work}
+\label{sectionproblemstatement}
+
+% TODO er wordt bijna geen woord besteed aan simulators
+% TODO RTL beter benadrukken
+% TODO melden dat EE en CE niet op de UvA onderwezen worden
+
 In their teaching of computer architecture and organization at the University of Amsterdam's (UvA) department of computer science, the course instructors see an opportunity for improvement through introduction of FPGA development boards as a tool for experimentation during practical exercises. The instructors sense the need for a hands-on approach in teaching their subjects, since computer science students lack experience with physical hardware. The course is taught early in the first year of undergraduate students over a period of two months, so students are not expected to have any academic experience in the field of computer science. 
 
-
-
-% FPGA's zijn in de visie van de docenten geen onderwijsdoel, maar een onderwijsmiddel
-
-% TODO de notie lack of experience with physical hardware verdient nog wel wat extra aandacht. 
-% TODO dit moet ook het gebruik van simulators diskwalificeren
-% Ook de onderstaande punten moeten worden losgekoppeld van de moethode en alleen worden toegepast op de inzet van FPGA's in onderwijs als een fysieke component.
-
-% TODO de docenten willen een laagdrempelige oplossing voor eerstejaars studenten
-
-% TODO melden dat EE en CE niet op de UvA onderwezen worden
 
 \subsection{A Shift in Focus}
 Although computer architecture and organization is part of the curricula of electrical engineering, computer engineering and computer science students, its place is different in each curriculum. 
 For electrical engineering students, digital systems are the final station in terms of abstraction. For computer science students, it's the start of a journey. Computer engineering can be considered to be in the middle of this spectrum. The UvA's instructors aim to shift the course's focus to the abstract aspects of digital systems, such as instruction-level parallelism and caching strategies in computer architectures. The instructors find a higher-level level view of digital systems on a register-transfer level and an instruction level to be more in line with a computer science student's curriculum. Only a basic understanding of lower-level subjects such as digital design and electronic is pursued. In their decision, the instructors follow a trend that was observed in \cite[p. 205]{cs2013final}: a de-emphasis of digital design in computer science curricula. Deep coverage of digital design is considered to more appropriate in the curricula of electrical engineering and computer engineering. 
-
-% De docenten willen bijvoorbeeld dat studenten in staat zijn een instructie abstract te implementeren op RTL level, maar zijn niet langer geinteresseerd studenten in detail te leren hoe je een full adder implementeert.
 
 The UvA's computer architecture and organization course contents are based on the works of Hennessy and Patterson \cite{hennessy2013computer} which considers the design process of a microprocessor from a higher-level view. In their work there is a significant focus on the numerical analysis of decisions made in that process. The instructors' intended goal for their practical sessions is to allow students to analyse the implications of these higher-level design decisions through experimentation. As also noted in \cite{paharsingh2009novel}, students who have not experimented with abstract subjects such as pipelining and caching show lower test scores in these areas. 
 
@@ -205,10 +81,6 @@ By way of example, the instructors would like to be able to provide students wit
 \subsection{Physical component}
 
 Moving away from the lower-level aspects of computer architecture and organization contradicts with the instructors' observation that computer science students lack in their experience with computer hardware. However, the UvA's instructors believe that the introduction of a physical component in their practical sessions could present a solution. Although the instructors aim to focus on the more abstract subjects, letting students experiment with these subjects through physical devices could implicitly develop a student's intuition for hardware-related concepts and support students in gaining a basic understanding of the lower-level aspects of computer architectures. Furthermore, the instructors believe that this approach to teaching will allow students to gain a better insight in more abstract concepts, since students are enabled to see these concepts  implemented in real, functioning hardware.
-
-% Een beter begrip van de randzaken ontwikkelen. Een fysieke component helpt in het creeren van een overall bewustzijn.  
-
-% The instructors sense the need for a hands-on approach in teaching their subjects, also noted in \cite{cifredo2015computer, oztekin2011bzk}. Computer science students lack experience with physical hardware, an observation also made in \cite{el2011teaching}. 
 
 The instructors have identified FPGAs as a viable candidate to fulfill this need for a physical component in their teaching. FPGAs have been adopted in teaching for similar reasons. 
 In \cite{cifredo2015computer, oztekin2011bzk} FPGAs have been included in the teaching as a solution to the need for a hands-on approach in the teaching of computer architecture and organization.
@@ -236,13 +108,8 @@ Since the UvA's course is targeted at inexperienced first-year computer science 
 
 As previously stated, the UvA's computer science students are only required to be familiar with the concepts of digital systems and to have a basic understanding of digital design. The aforementioned additional skills, such as HDL modelling are not part of the students' curriculum. The students would be unnecessarily burdened by these requirements. One could conclude that the discussed implementation-based methods are thus better suited to the curricula of electrical engineering and computer engineering, since the prerequisite subjects are often taught as part of these curricula. 
 
-
 % EDA Development en simulation tools zijn gericht op implementatie debugging en validation. niet op het verzamelen van experimentele resultaten. Docenten zijn vervolgens weer zelf verantwoordelijk voor de tools om deze resultaten te creeren.
 
-
-% ###############################
-% #### hier een stuk welke methoden meer het doel van de docenten nastreven
-% ################################
 
 \subsection{Ready-made Solutions}
 
@@ -263,28 +130,8 @@ The UvA's computer architecture and organization course instructors require a so
 
 Some existing methods hide these complexities form their students, but only feature fixed computer architecture implementations. These systems are built from tightly-coupled components that do not allow for easy modification of the featured computer architecture. In order for the UvA's instructors to achieve their goal, a generic approach to embedding digital systems in FPGAs is required, allowing instructors to provide their students with a range of varying computer architecture implementations, while reusing standard components for containment within the FPGA and using generic PC software. The instructors' work should focus on implementing a computer architecture. Furthermore, their work should be easily adaptable to different FPGA development boards.
 
-% ###############################
-% #### Conclusie
-% ################################
-
-
-
-% studenten moeten op een zeer envoudige manier in staat zijn het experiment te observeren en interactie te hebben met het experiment. De bovenstaande methoden laten dit niet toe en leiden de student alleen maar heel erg af van het doel van het experiment, doordat ze op verschillende abstractieniveaus actief moeten zijn. 
-
-
-% TODO uitleggen dat de docenten juist diepgang willen creeren door studenten te laten experimenteren met een breed scala aan architecturen. Bij wijze van spreke alle stappen die H\&P doorlopen in hun proces implementeren en de student in staat stellen elke stap live mee te kunnen kijken.
-
-% Uiteindelijk is dus het onderliggende probleem dat het ontbreekt aan een methode waarbij studenten in staat wordt gesteld m.b.v. een fysieke component te experimenteren met een wijd scala aan architecturen, zodat voldoende diepgang kan worden gecreerd. Zij moeten hierin niet worden gehinderd door een enorme berg aan voorwerk en vereiste skills. 
-
-% Voor docenten moet het makkelijk worden om een variatie aan ontwerpen te creeren zonder dat zij elke keer het wiel moeten uitvinden. Bovendien is het voor de overdraagbaarheid essentieel dat ze niet zijn beperkt tot één specifiek stuk hardware. Bovendien moet een docent ook enorm een enorme inverstering in kennis doen vooraf. 
-
-% No method is currently known to exist in which instructors are enabled to develop experiments in a board-independent manner. Instructors are thus required to familiarize themselves with the specific features of the FPGA development board that was chosen. In this way, instructors are creating a dependency between their work and a specific piece of hardware. This dependency then limits instructors in sharing their work with colleagues and reusing their work on new FPGA hardware. The development of these methods require a significant investment in time and knowledge.  This investment is not easily repaid. Sharing of experiments is difficult, limiting the target audience and preventing reuse. 
-
-% Om het ontwikkelproces te vergemakkelijken moet er een nieuw ontwikkelmodel worden bedacht waarbij het mogelijk wordt dat docenten niet elke keer het wiel opnieuw uitvinden. Zij moeten zich bezig kunnen houden met de ontwikkeling van experimenten en niet met de randzaken die voor elk specifiek bordje weer anders zijn. Het ontwikkelproces moet op deze manier minder kennis en tijd kosten. Verder moet het gemakkelijk zijn om experimenten te kunnen delen zonder dat het experiment moet worden aangepast aan een nieuw bordje.  
-
-
 \section{Thesis Scope}
-
+Although this thesis' problem statement discusses various didactic aspects of the teaching of computer architecture and organization, evaluation of the proposed solution's educational value is explicitly excluded from this thesis' scope. The goal of this thesis is to find a technical solution that satisfies the UvA's instructors' requirements as described in the problem statement. 
 
 
 \section{Research Question}
@@ -375,7 +222,6 @@ TODO uitleggen waarom synchronous sequential logic niet werkt op FPGAs. Timing s
 
 % TODO Toto: verdient een introductie. waarom ga je het model in stages opbouwen? waarom wordt er een limiting factor gezien? 
 % TODO Duidelijkere verwijzing naar problem statement. Een uitgewerkte problem statement is ook een goed idee.
-
 
 This chapter will propose a model that provides a theoretical solution to the problem statement as described in section \ref{sectionproblemstatement}. This model addresses the problem statement from a technical and architectural point of view, as well as how user processes are affected. As a starting point, a description of a basic model for experiment setups on FPGA development boards is given in section \ref{sectionbasicmodel}, which is then extended and modified through a series of stages. In every stage, a particular aspect of the problem statement is addressed, forming a complete solution eventually. 
 
