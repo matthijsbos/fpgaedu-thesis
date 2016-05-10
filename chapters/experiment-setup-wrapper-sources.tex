@@ -1,0 +1,206 @@
+
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\newgeometry{left=1.5cm,right=1.5cm,top=1.5cm,bottom=2.5cm}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}} 
+\chapter{Experiment Setup Wrapper Source Code}
+\label{chapter:fpga-edu-wrapper-sources}
+Sources available at \url{https://github.com/matthijsbos/fpgaedu-wrapper}.
+
+\captionsetup{margin=0in,format=hang}
+\lstset{captionpos=t, xleftmargin=0in, xrightmargin=0in,  basicstyle=\small}
+
+\section{Main.java}
+\begin{lstlisting}[language=Java, caption={Contents of \texttt{./src/main/java/nl/matthijsbos/fpgaedu/wrapper/Main.java}}]
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package nl.matthijsbos.fpgaedu.wrapper;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import nl.matthijsbos.fpgaedu.wrapper.antlr4.VhdlLexer;
+import nl.matthijsbos.fpgaedu.wrapper.antlr4.VhdlParser;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
+/**
+ *
+ * @author matthijsbos
+ */
+public class Main {
+    public static void main(String[] args) {        
+        InputStream inputStream = Main.class.getResourceAsStream("/vhdl/nexys4testsetup.vhd");
+        VhdlLexer lexer = null;
+        try {
+            lexer = new VhdlLexer(new ANTLRInputStream(inputStream));
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        VhdlParser parser = new VhdlParser(tokens);
+        ParseTree tree = parser.design_file();
+        ParseTreeWalker walker = new ParseTreeWalker();
+        MyListener listener = new MyListener();
+        walker.walk(listener, tree);
+    }
+}
+
+\end{lstlisting}
+%\clearpage
+
+\section{MyListener.java}
+\begin{lstlisting}[language=Java, caption={Contents of \texttt{./src/main/java/nl/matthijsbos/fpgaedu/wrapper/MyListener.java}}]
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package nl.matthijsbos.fpgaedu.wrapper;
+
+import java.util.List;
+import nl.matthijsbos.fpgaedu.wrapper.antlr4.*;
+
+/**
+ *
+ * @author matthijsbos
+ */
+public class MyListener extends VhdlBaseListener {
+
+    @Override
+    public void enterEntity_declaration(VhdlParser.Entity_declarationContext ctx) {
+        
+        List<VhdlParser.Interface_port_declarationContext> port_declarations = null;
+        
+        String entity_identifier = ctx.identifier().get(0).BASIC_IDENTIFIER()
+                .getText();
+        System.out.printf("entity identifier: %s\n", entity_identifier);
+        
+        if (ctx.entity_header() != null && 
+                ctx.entity_header().generic_clause() != null) {
+            System.out.println("generic clause is not supported");
+        }
+        
+        if (ctx.entity_header() != null && 
+                ctx.entity_header().port_clause() != null) {
+            port_declarations = ctx.entity_header().port_clause().port_list()
+                    .interface_port_list().interface_port_declaration();
+        }
+        
+        if (port_declarations != null) {
+            for (VhdlParser.Interface_port_declarationContext port_declaration: 
+                    port_declarations) {        
+                for (VhdlParser.IdentifierContext identifier: 
+                        port_declaration.identifier_list().identifier()) {
+                    System.out.printf("Port identifier: %s\n", 
+                            identifier.getText());
+                }
+                System.out.printf("Signal mode: %s\n", 
+                        port_declaration.signal_mode().getText());
+                System.out.printf("Type: %s\n", 
+                        port_declaration.subtype_indication().selected_name(0)
+                                .identifier().getText());
+                
+                if (port_declaration.subtype_indication().selected_name().get(0)
+                        .identifier().getText().toLowerCase().equals("std_logic_vector") &&
+                        port_declaration.subtype_indication().constraint() != null) {
+                    VhdlParser.Explicit_rangeContext range = port_declaration
+                            .subtype_indication().constraint()
+                            .index_constraint().discrete_range(0).range()
+                            .explicit_range();
+                    String from = range.simple_expression(0).term(0).factor(0)
+                            .primary(0).literal().numeric_literal()
+                            .abstract_literal().getText();
+                    String to = range.simple_expression(1).term(0).factor(0)
+                            .primary(0).literal().numeric_literal()
+                            .abstract_literal().getText();
+                    String direction = range.direction().getText();
+                    
+                    System.out.printf("Constraint: (%s %s %s)\n", 
+                            from, direction, to);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void enterArchitecture_body(VhdlParser.Architecture_bodyContext ctx) {
+        String architecture_name = ctx.identifier(0).getText();
+        System.out.printf("Architecture name: %s\n", architecture_name);
+    }
+    
+    
+}
+
+\end{lstlisting}
+%\clearpage
+
+\section{pom.xml}
+\begin{lstlisting}[caption={Contents of \texttt{./pom.xml}}]
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>nl.matthijsbos</groupId>
+    <artifactId>fpgaedu-wrapper</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <build>
+        <resources>
+            <resource> 
+                <directory>${basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.5.3</version>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4</artifactId>
+            <version>4.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spullara.mustache.java</groupId>
+            <artifactId>compiler</artifactId>
+            <version>0.9.1</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    <name>fpgaedu-wrapper</name>
+</project>
+\end{lstlisting}
+%\clearpage
+
+\restoregeometry
+\end{document}
