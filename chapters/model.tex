@@ -2,7 +2,7 @@
 \begin{document}
 
 \chapter{Model}
-
+\label{chapter:model}
 % TODO Toto: verdient een introductie. waarom ga je het model in stages opbouwen? waarom wordt er een limiting factor gezien? 
 % TODO Duidelijkere verwijzing naar problem statement. Een uitgewerkte problem statement is ook een goed idee.
 
@@ -14,7 +14,7 @@ In section \ref{sectioncyclecontrol} the controller is extended such that it all
 
 In section \ref{sectioncontrollerabstraction} the experiment controller's interface is generalized, such that the interface dependencies between experiment setup and controller are removed. This allows for independent development of controllers and experiment setups, allowing for random combinations of board-specific controllers and independent experiment setup logic. The controller's PC interface is generalized as well, which allows for the development of universal PC software.
 
-In section \ref{sectionreintroducingio} the FPGA development board's physical I/O devices are reintroduced into the model, after being removed from the model in section \ref{sectionvirtualizingio}. This step is essential in enabling a student's physical view of the experiment setup and providing a hands-on experience. The development of experiment setups remains an independent process.
+% In section \ref{sectionreintroducingio} the FPGA development board's physical I/O devices are reintroduced into the model, after being removed from the model in section \ref{sectionvirtualizingio}. This step is essential in enabling a student's physical view of the experiment setup and providing a hands-on experience. The development of experiment setups remains an independent process.
 
 
 
@@ -29,10 +29,10 @@ As a starting point, a description of a basic model for experiment setups on FPG
 
 
 \begin{figure}[h]
-\centering
-\includegraphics[width=0.8\textwidth]{img/overview-basic}
-\caption{The basic model, an overview of the FPGA development board and its exposed interfaces.}
-\label{fig:overview-basic}
+    \centering
+    \caption{The basic model, an overview of the FPGA development board and its exposed interfaces.}
+    \label{fig:overview-basic}
+    \includegraphics[width=0.8\textwidth]{img/overview-basic}
 \end{figure}
 
 In this basic model, the FPGA development board is considered to be a printed circuit board (PCB) which hosts and interconnects a FPGA and its various peripheral components. Not all pins of the FPGA package and not all peripheral devices are considered to be relevant to the model. Only the pins whose signals can be controlled through the FPGA's contained logic are included. Peripheral devices that do not connect to these pins, such as power supplies or programming circuits are excluded from the model. Specifically, the presence of a clock generating device is assumed, providing the FPGA with a clock signal on one of its pins. Although this model is a great simplification of reality, this abstract view is assumed to be sufficient for the purposes of this model and applicable to most FPGA development boards. 
@@ -40,10 +40,10 @@ In this basic model, the FPGA development board is considered to be a printed ci
 Besides the omission of details of the FPGA's peripherals, a part of the FPGA's internal complexities are hidden from the model as well. Figure \ref{fig:fpga-basic} gives a graphical overview of the FPGA's internals and its contained logic. The FPGA's internal interface is simplified and defined to be a container for the end product of a HDL developer's work: an entity with input signals, output signals and an input clock signal. Other physical, electrical or logical characteristics of the FPGA are not included in the model.
 
 \begin{figure}[h]
-\centering
-\includegraphics[width=\textwidth]{img/fpga-basic}
-\caption{The basic model, an overview of the FPGA and its contained experiment setup logic. No specific architecture is applied to the logic.}
-\label{fig:fpga-basic}
+    \centering
+    \caption{The basic model, an overview of the FPGA and its contained experiment setup logic. No specific architecture is applied to the logic.}
+    \label{fig:fpga-basic}
+    \includegraphics[width=\textwidth]{img/fpga-basic}
 \end{figure}
 
 In the case of this basic model, no specific architecture is defined that will embed the experiment setup logic into the FPGA development board. A specific architecture will be developed in the following stages. At this stage of the model, a developer is responsible for the development of its own architecture that embeds the experiment setup logic into the environment of the FPGA.
@@ -56,9 +56,9 @@ Experiment setup developers are responsible for the design, implementation, test
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{img/processes-basic-development}
     \caption{The basic model, an overview of the experiment setup development process.}
     \label{fig:process-development-basic}
+    \includegraphics[width=\textwidth]{img/processes-basic-development}
 \end{figure}
 
 
@@ -78,9 +78,9 @@ Experimenters are responsible for carrying out experiments. They obtain experime
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{img/processes-basic-experimentation}
     \caption{The basic model, an overview of the experimentation process.}
     \label{fig:process-experimentation-basic}
+    \includegraphics[width=\textwidth]{img/processes-basic-experimentation}
 \end{figure}
 
 In order for a user to act as an experimenter, one must understand the logic and workings of the obtained experiment setup. Furthermore, an experimenter must understand the basic concepts and role of the FPGA development board, as well as how to program the FPGA via the experimenter's PC. In preparation of the experiment, experimenters must install programming software and operating system drivers for the FPGA development board. In this case, interaction and observation is done through the board's I/O devices. 
@@ -109,9 +109,9 @@ In order to support experiment setup entities with a large number of input and o
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{img/fpga-inout}
 \caption{I/O virtualized, an overview of the FPGA and its contained logic architecture. The controller embeds the experiment setup logic into the FPGA.}
 \label{fig:fpga-inout}
+\includegraphics[width=\textwidth]{img/fpga-inout}
 \end{figure}
 
 % Concept controller ook te zien in \cite{jansen2014every}
@@ -122,14 +122,14 @@ The controller exposes an additional interface through a communication channel t
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{img/overview-inout}
 \caption{I/O virtualized, an overview of the FPGA development board and its exposed interfaces.}
 \label{fig:overview-inout}
+\includegraphics[width=\textwidth]{img/overview-inout}
 \end{figure}
 
 The explicit separation of concerns in the logic architecture allows for separate implementation and validation processes for experiment setup logic, controller logic and PC software. This partitioning subsequently allows for distribution of work among specialists, removing the need for a single experiment developer to have knowledge and experience in all the areas previously described in section  \ref{sectionexperimentdevelopers}. As a consequence of the separation however, more dependencies are introduced into the development process. The development of a controller component requires a definition of the experiment setup's interface and any change in this interface definition requires modification of the controller. A similar dependency exists between the controller and the PC software. A change in the experiment setup entity's interface definition will thus not only result in the need for modification of the controller, but in the need for modification of the PC software as well. These dependencies are addressed and removed from the model in section \ref{sectioncontrollerabstraction}.
 
-Experiment setup interaction through dedicated PC software will simplify the experimentation process for experiment setups with large number of input and output signals. Involving the PC removes the need for experimenters to install and familiarize themselves with the FPGA's development tools. Experimenters will be able to interact with the experiment setup through a graphical interface on the PC, removing the need need for HDL programming skills and allowing for real-time interaction, since no recompilation is required. Since the board's I/O devices have been removed at this stage of the model, there is no possibility for users to physically interact with the experiment. The PC software provides the only means of interaction with the experiment setup. These removed I/O devices however, will be reintroduced into the model in section \ref{sectionreintroducingio}.
+Experiment setup interaction through dedicated PC software will simplify the experimentation process for experiment setups with large number of input and output signals. Involving the PC removes the need for experimenters to install and familiarize themselves with the FPGA's development tools. Experimenters will be able to interact with the experiment setup through a graphical interface on the PC, removing the need need for HDL programming skills and allowing for real-time interaction, since no recompilation is required. Since the board's I/O devices have been removed at this stage of the model, there is no possibility for users to physically interact with the experiment. The PC software provides the only means of interaction with the experiment setup. These removed I/O devices however, will be reintroduced into the model in section % \ref{sectionreintroducingio}.
 
 % TODO Hoe ziet de PC software er uit?
 
@@ -146,9 +146,9 @@ In the previous section, the basic model has been extended to include a definiti
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{img/fpga-control}
 \caption{Cycle control, an overview of the FPGA and its contained logic architecture. The \texttt{clock\_enable} and \texttt{reset} signals are added to allow for cycle-accurate interaction and (re)initialization.}
 \label{fig:fpga-control}
+\includegraphics[width=\textwidth]{img/fpga-control}
 \end{figure}
 
 As a solution to the problem stated above, the FPGA's contained logic architecture has been extended, as displayed in figure \ref{fig:fpga-control}. The most significant change is the addition of the \texttt{clock\_enable} input signal on the experiment setup's interface definition. Combined with the \texttt{reset} signal, these new input signals allow for cycle-accurate control and reinitialization of the experiment setup logic's state. The introduction of the \texttt{clock\_enable} signal will require modification of every synchronous memory element present in the experiment setup logic, as displayed in figure \ref{fig:clock-manipulation-enable}. By multiplexing the input signal for every memory element based on the same \texttt{clock\_enable}, one can control the state change in a cycle-accurate manner. The method of using enable signals to control synchronous logic is described in \cite[Sec 2.4.5]{arora2011art}.
@@ -165,29 +165,29 @@ One may argue that this approach is unfavourable, since it requires modification
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[t]{0.5\textwidth}
-        \centering
-        \includegraphics[height=1.5in]{img/clock-manipulation-gated}
-        \caption{Gated clocks}
-        \label{fig:clock-manipulation-gated}
-    \end{subfigure}%
-    \begin{subfigure}[t]{0.5\textwidth}
-        \centering
-        \includegraphics[height=1.5in]{img/clock-manipulation-enable}
-        \caption{Enable signal}
-        \label{fig:clock-manipulation-enable}
-    \end{subfigure}%
     \caption{Controlling state transitions through a clock enable signal and a gated clock signal.}
     \label{fig:clock-manipulation}
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \caption{Gated clocks}
+        \label{fig:clock-manipulation-gated}
+        \includegraphics[height=1.5in]{img/clock-manipulation-gated}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \caption{Enable signal}
+        \label{fig:clock-manipulation-enable}
+        \includegraphics[height=1.5in]{img/clock-manipulation-enable}
+    \end{subfigure}%
 \end{figure}
 
 In order to make this newly developed functionality available to the experimenter through the PC software, the controller interface is extended to support new operations that allow for the control of cycles. As displayed in figure \ref{fig:overview-control}, five new operations are available through the controller's interface. The \texttt{Controller.Reset()} operation (re)initializes the experiment setup to it initial state and waits for the next operation. Experimenters have manual control over the experiment setup's cycles through the \texttt{Controller.Step()} operation. The controller may also be instructed to manage the experiment setup autonomously through the \texttt{Controller.Start()} operation. The maximum operating frequency may be defined through the \texttt{Controller.LimitSpeed()} operation. The \texttt{Controller.Stop()} operation stops the controller's autonomous management of the experiment setup and awaits the next operation. Similar interfaces for cycle-accurate control of experiment setups are described in \cite{holland2003harnessing} and \cite{bulic2013fpga}.
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=\textwidth]{img/overview-control}
 \caption{Cycle control, an overview of the FPGA development board. The controller's interface is extended with operations that allow for cycle-accurate interaction with the experiment setup.}
 \label{fig:overview-control}
+\includegraphics[width=\textwidth]{img/overview-control}
 \end{figure}
 
 
@@ -246,24 +246,32 @@ The controller does no longer provide an interface to the experiment setup, but 
 % - begrip interface is wijdversprijd
 % - ik had niet de capaciteiten om uitgebreid de mogelijke aanvullende voordelen van een businterface te bestuderen, terwijl deze interface voldoende biedt.
 
+
+
 \begin{figure}[h]
     \centering
+    \caption{Interfaces}
+    \label{fig:interfaces}
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=1.2in]{img/interface-bram}
-        \caption{Single-port block ram, derived from \cite{RAMs68}}
+        \caption{Single-port block ram, derived from \cite[Ch.1]{ug473}}
         \label{fig:interface-bram}
+        \includegraphics[height=1.2in]{img/interface-bram}
     \end{subfigure}%
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=1.5in]{img/interface-experiment}
         \caption{Experiment setup interface}
         \label{fig:interface-experiment}
+        \includegraphics[height=1.5in]{img/interface-experiment}
     \end{subfigure}
-    \caption{Interfaces}
-    \label{fig:interfaces}
 \end{figure}
 
+\begin{figure}[h]
+    \caption{Timing diagram for experiment setup logic, derived from \cite[Fig.1-2]{ug473}}
+    \label{fig:timing-bram}
+    \centering
+    \includegraphics[width=\textwidth]{img/timing-bram}
+\end{figure}
 
 \subsection{Memory devices}
 %TODO sectie verbeteren, nog erg vage zinnen.
@@ -284,9 +292,9 @@ In stead of the distinction between controller and experiment setup, a new separ
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=.8\textwidth]{img/fpga-abstract}
 \caption{Controller abstracted, FPGA logic design}
 \label{fig:fpga-abstract}
+\includegraphics[width=.8\textwidth]{img/fpga-abstract}
 \end{figure}
 
 A new process is defined for the composition of board component and experiment setup component into a bitstream file. This results in the processes of experiment setup development and board component development to become independent. Figure \ref{fig:dependencies-abstract} displays the composition process and its relation to the  development processes for experiment setup component and board development component in terms of dependencies. 
@@ -307,9 +315,9 @@ A major advantage of the generic interface between the controller and experiment
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{img/overview-abstract}
 \caption{Controller abstracted, overview}
 \label{fig:overview-abstract}
+\includegraphics[width=\textwidth]{img/overview-abstract}
 \end{figure}
 
 
@@ -355,35 +363,35 @@ A major advantage of the generic interface between the controller and experiment
 
 
 
-\section{Reintroducing Board I/O}
-\label{sectionreintroducingio}
+% \section{Reintroducing Board I/O}
+% \label{sectionreintroducingio}
 
-Experiment setup has no accurate notion of time, so I/O devices can only be addressed as combinational devices. I/O device drivers facilitate this.
+% Experiment setup has no accurate notion of time, so I/O devices can only be addressed as combinational devices. I/O device drivers facilitate this.
 
-Board I/O capabilities are of vital iportance in providing a physical hands-on experience. Although the FPGA itself is a physical object, the board's I/O capabilities expose the hardware setup's physical behaviour and provide real life interaction capabilities. Without this step, the whole point of a physical hands-on experience is lost.
+% Board I/O capabilities are of vital iportance in providing a physical hands-on experience. Although the FPGA itself is a physical object, the board's I/O capabilities expose the hardware setup's physical behaviour and provide real life interaction capabilities. Without this step, the whole point of a physical hands-on experience is lost.
 
-See figure \ref{fig:fpga-io}
+% See figure \ref{fig:fpga-io}
 
-\subsection{I/O processing}
-Optionally, one needs to introduce device driver logic in order to allow for sequential I/O device logic to be usable as combinational logic. 
-
-
+% \subsection{I/O processing}
+% Optionally, one needs to introduce device driver logic in order to allow for sequential I/O device logic to be usable as combinational logic. 
 
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=\textwidth]{img/overview-io}
-\caption{I/O reintroduced, overview}
-\label{fig:overview-io}
-\end{figure}
 
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=\textwidth]{img/fpga-io2}
-\caption{I/O reintroduced, FPGA logic design}
-\label{fig:fpga-io}
-\end{figure}
+% \begin{figure}[h]
+% \centering
+% \caption{I/O reintroduced, overview}
+% \label{fig:overview-io}
+% \includegraphics[width=\textwidth]{img/overview-io}
+% \end{figure}
+
+
+% \begin{figure}[h]
+% \centering
+% \caption{I/O reintroduced, FPGA logic design}
+% \label{fig:fpga-io}
+% \includegraphics[width=\textwidth]{img/fpga-io2}
+% \end{figure}
 
 % \begin{figure}
 % \centering

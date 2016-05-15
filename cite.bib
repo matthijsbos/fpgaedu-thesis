@@ -95,37 +95,22 @@ year = {2015},
   publisher={Newnes}
 }
 
-@online{simpl,
+@electronic{simpl,
+ author = {CSA},
+ organization = {University of Amsterdam},
  title = {SIM-PL},
  month = jun,
  year = {2015},
- url = {http://csa.science.uva.nl/sim-pl}
+ url = {http://csa.science.uva.nl/sim-pl/}
 }
 
 
-@ONLINE{spim,
+@electronic{spim,
  author = {Larus, James},
  title = {SPIM MIPS Simulator},
  month = jun,
  year = {2015},
  url = {http://spimsimulator.sourceforge.net/}
-}
-
-
-@ONLINE{xilinxFPGA,
- author = {{Xilinx Inc.}},
- title = {What is an FPGA?},
- month = jun,
- year = {2015},
- url = {http://www.xilinx.com/fpga/}
-}
-
-@online{fpgaclbimg,
- author  = "Kallstrom, Petter",
- title   = "FPGA cell example",
- year    = {2015},
- month   = jun,
- url     = "https://commons.wikimedia.org/wiki/File:FPGA_cell_example.png",
 }
 
 @article{al2007teaching,
@@ -276,12 +261,6 @@ year = {2015},
   ISBN = {1461403960}
 }
 
-@online{RAMs68,
-title = {RAMs},
-url = {http://www.csit-sun.pub.ro/courses/Masterat/Xilinx%20Synthesis%20Technology/toolbox.xilinx.com/docsan/xilinx4/data/docs/xst/hdlcode14.html},
-urldate = {2016-02-22}
-}
-
 @book{cs2013final,
  author = {Joint Task Force on Computing Curricula, Association for Computing Machinery (ACM) and IEEE Computer Society},
  title = {Computer Science Curricula 2013: Curriculum Guidelines for Undergraduate Degree Programs in Computer Science},
@@ -292,20 +271,22 @@ urldate = {2016-02-22}
  address = {New York, NY, USA},
 } 
 
-@misc{mipsfpga,
-author = {},
-title = {University - Imagination Community},
-howpublished = {\url{https://community.imgtec.com/university/}},
-month = {},
-year = {},
-note = {(Accessed on 03/15/2016)}
+@electronic{mipsfpga,
+author = {Robert Owen},
+title = {MIPSfpga programme opens up the MIPS architecture to universities worldwide},
+organization = {Imagination Technologies Limited},
+month = apr,
+year = {2015},
+url={http://blog.imgtec.com/mips-processors/mipsfpga-opens-up-the-mips-architecture-to-universities-worldwide}
 }
 
-@misc{opencores,
-title = {Home :: OpenCores},
-howpublished = {\url{http://opencores.org/}},
-note = {(Accessed on 03/18/2016)}
+@electronic{opencores,
+  author = {OpenCores.org},
+  title = {OpenCores},
+  url = {http://opencores.org/},
+  urldate = {2016-05-10}
 }
+
 
 @book{kilts2007advanced,
   title={Advanced FPGA design: architecture, implementation, and optimization},
@@ -330,14 +311,16 @@ note = {(Accessed on 03/18/2016)}
  isbn = {978-0133942484}
  }
 
-@misc{nexys4reference,
-  title={Nexys 4 FPGA Board Reference Manual},
-  author={{Digilent Inc.}},
-  year={2013},
-  howpublished={\url{http://www.xilinx.com/support/documentation/university/XUP\%20Boards/XUPNexys4/documenatation/Nexys4_RM_VB1_Final_3.pdf}}
+@manual{nexys4reference,
+  title         = {{N}exys 4 {FPGA} {B}oard {R}eference {M}anual},
+  organization  = {{Digilent Inc.}},
+  month         = sep,
+  year          ={2013},
+  number        = {502-274},
+  url           = {http://www.xilinx.com/support/documentation/university/XUP%20Boards/XUPNexys4/documenatation/Nexys4_RM_VB1_Final_3.pdf}
 }
 
-@online{Frami37,
+@electronic{Frami37,
   author = {Eli Bendersky},
   title = {Framing in serial communications},
   day = 12,
@@ -345,4 +328,24 @@ note = {(Accessed on 03/18/2016)}
   year = 2009,
   url = {http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/},
   urldate = {2016-05-10}
+}
+
+@manual{ug472,
+    organization  = {Xilinx Inc.},
+    title         = {7 {S}eries {FPGA}s {C}locking {R}esources},
+    number        = {UG472},
+    year          =  2015,
+    month         =  jun,    
+    edition       = {v1.11.2},
+    url           = {http://www.xilinx.com/support/documentation/user_guides/ug472_7Series_Clocking.pdf}
+}
+
+@manual{ug473,
+    organization  = {Xilinx Inc.},
+    title         = {7 {S}eries {FPGA}s {M}emory {R}esources},
+    number        = {UG473},
+    year          =  2014,
+    month         =  nov,    
+    edition       = {v1.11},
+    url           = {http://www.xilinx.com/support/documentation/user_guides/ug473_7Series_Memory_Resources.pdf}
 }
