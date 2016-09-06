@@ -6,17 +6,13 @@
 % TODO Toto: verdient een introductie. waarom ga je het model in stages opbouwen? waarom wordt er een limiting factor gezien? 
 % TODO Duidelijkere verwijzing naar problem statement. Een uitgewerkte problem statement is ook een goed idee.
 
-This chapter will propose a model that provides a theoretical solution to the problem statement as described in section \ref{sectionproblemstatement}. This model addresses the problem statement from a technical and architectural point of view, as well as how user processes are affected. As a starting point, a description of a basic model for experiment setups on FPGA development boards is given in section \ref{sectionbasicmodel}, which is then extended and modified through a series of stages. In every stage, a particular aspect of the problem statement is addressed, forming a complete solution eventually. 
+This chapter will propose a model that provides a theoretical solution to the problem statement as described in section \ref{sectionproblemstatement}. This model addresses the problem statement from a technical and architectural point of view, as well as how user processes are affected. As a starting point, a description of a basic model for experiment setups on FPGA development boards is given in section \ref{sectionbasicmodel}, which is then further developed through a series of stages. In every stage, a particular aspect of the problem statement is addressed, forming a complete solution eventually.
 
-In section \ref{sectionvirtualizingio} the possible limiting factor of the  number of I/O devices on the FPGA development board is addressed by introducing the concept of a controller. This controller provides the experiment setup logic with a variable amount of virtual I/O channels. The levels of these I/O channels can then observed and controlled through controller-specific PC software. All of the physical I/O devices are temporarily removed from the model, as well as most of the FPGA's other peripheral devices.
+In section \ref{sectionvirtualizingio} the possible limiting factor of the number of I/O devices on the FPGA development board is addressed by introducing the concept of a controller. This controller provides the experiment setup logic with a variable amount of virtual I/O channels. The levels of these I/O channels can then observed and controlled through the controller's interface that is exposed through a PC connection. In section \ref{sectioncyclecontrol} the controller is extended to allow for cycle-accurate control of experiment setups defined through synchronous sequential logic by making use of a FPGA's internal clocking resources. This new functionality is translated into new controller commands which are exposed over the PC connection. These two stages primarily focus on providing sufficient functionality for experimentation, while a number of the model's modifications are inspired by related work.
 
-In section \ref{sectioncyclecontrol} the controller is extended such that it allows for cycle-accurate control of sequential experiment setup logic. Users control cycles through the PC software, but the model supports autonomous operation as well. This new functionality is added through expansion of the experiment setup interface.
+In section \ref{sectioncontrollerabstraction}, the concept of an address space is proposed as a means for generalization of the interface between the controller and the experiment setup. This new level of abstraction allows for independent development of controller logic and experiment setup logic, since these components have no longer got any specific dependencies between them. This generalization is then utilized in modification of the experiment setup development process, such that it allows for reuse of components, thus reducing the amount work required for the development of new experiment setups.
 
-In section \ref{sectioncontrollerabstraction} the experiment controller's interface is generalized, such that the interface dependencies between experiment setup and controller are removed. This allows for independent development of controllers and experiment setups, allowing for random combinations of board-specific controllers and independent experiment setup logic. The controller's PC interface is generalized as well, which allows for the development of universal PC software.
-
-% In section \ref{sectionreintroducingio} the FPGA development board's physical I/O devices are reintroduced into the model, after being removed from the model in section \ref{sectionvirtualizingio}. This step is essential in enabling a student's physical view of the experiment setup and providing a hands-on experience. The development of experiment setups remains an independent process.
-
-
+In section \ref{sectiondevelopmentprocessabstraction}, specific characteristics of this new experiment setup development process are exploited to allow for the introduction of new tools in that automate parts of the development process. These new tools do not only further reduce the amount of work required during development, but provide a new level of abstraction as well. Through this new level of abstraction, a part of the development process' complexity is hidden from the experiment setup developer.
 
 \section{The Basic Model}
 \label{sectionbasicmodel}
@@ -25,7 +21,8 @@ In section \ref{sectioncontrollerabstraction} the experiment controller's interf
 
 % TODO in figuren en tekst onderscheid maken tussen I/O, HID, peripheral, communication device.
 
-As a starting point, a description of a basic model for experiment setups on FPGA development boards is given. An overview of the basic model is displayed in figure \ref{fig:overview-basic}. The model features a PC and a FPGA development board as the two primary physical components. An interface between the PC and the FPGA development board exists over which the board exposes the \texttt{Board.Program()} operation. This operation initializes the FPGA by loading the contents of a FPGA-specific bitstream file and configuring the FPGA's components. The physical and electrical characteristics of this interface are considered to be irrelevant and may even be a process that involves manual user operations, such as transferring a memory card.
+As a starting point, a description of a basic model for experiment setups on FPGA development boards is given. Essentially, this basic model describes how one would develop and interact with an experiment setup embedded in a FPGA using conventional methods. An overview of the basic model is displayed in figure \ref{fig:overview-basic}. The model features a PC and a FPGA development board as the two primary physical components. An interface between the PC and the FPGA development board exists over which the board exposes the \texttt{Board.Program()} operation. This operation initializes the FPGA by loading the contents of a FPGA-specific bitstream file and configuring the FPGA's components. 
+% The physical and electrical characteristics of this interface are considered to be irrelevant.
 
 
 \begin{figure}[h]
@@ -35,9 +32,9 @@ As a starting point, a description of a basic model for experiment setups on FPG
     \includegraphics[width=0.8\textwidth]{img/overview-basic}
 \end{figure}
 
-In this basic model, the FPGA development board is considered to be a printed circuit board (PCB) which hosts and interconnects a FPGA and its various peripheral components. Not all pins of the FPGA package and not all peripheral devices are considered to be relevant to the model. Only the pins whose signals can be controlled through the FPGA's contained logic are included. Peripheral devices that do not connect to these pins, such as power supplies or programming circuits are excluded from the model. Specifically, the presence of a clock generating device is assumed, providing the FPGA with a clock signal on one of its pins. Although this model is a great simplification of reality, this abstract view is assumed to be sufficient for the purposes of this model and applicable to most FPGA development boards. 
+In this basic model, the FPGA development board is considered to be a hosts for a FPGA and its various peripheral components. Not all pins of the FPGA's physical package and not all peripheral devices are considered to be relevant to the model. Only the pins whose signals can be controlled through the FPGA's contained logic are included. Peripheral devices that do not connect to these pins, such as power supplies or programming circuits are excluded from the model. Specifically, the presence of a clock generating device is assumed, providing the FPGA with a clock signal on one of its pins. 
 
-Besides the omission of details of the FPGA's peripherals, a part of the FPGA's internal complexities are hidden from the model as well. Figure \ref{fig:fpga-basic} gives a graphical overview of the FPGA's internals and its contained logic. The FPGA's internal interface is simplified and defined to be a container for the end product of a HDL developer's work: an entity with input signals, output signals and an input clock signal. Other physical, electrical or logical characteristics of the FPGA are not included in the model.
+Besides the omission of details of the FPGA's peripherals, a part of the FPGA's internal complexities are hidden from the model as well. Figure \ref{fig:fpga-basic} gives a graphical overview of the FPGA's internals and its contained logic. The FPGA's internal interface is simplified and defined to be a container for the end product of a HDL developer's work: an entity with input signals, output signals and an input clock signal. Other physical, electrical or logical characteristics of the FPGA are not included in this model.
 
 \begin{figure}[h]
     \centering
@@ -50,9 +47,9 @@ In the case of this basic model, no specific architecture is defined that will e
 
 In this basic model, two user roles are defined: experiment setup developers and experimenters. In a classroom environment, an instructor can be considered an experiment setup developer and a student can be considered an experimenter. 
 
-\subsection{Experiment Setup Developers}
+\subsection{Experiment Setup Development}
 \label{sectionexperimentdevelopers}
-Experiment setup developers are responsible for the design, implementation, testing, documentation and distribution of experiment setups for use on FPGA development boards. The end product of their work is a software package that contains a bitstream file and optionally the source files used in the bitstream file's compilation process. Figure \ref{fig:process-development-basic} displays a graphical overview of the experiment setup development process. 
+Experiment setup developers are responsible for the design, implementation, testing, documentation and distribution of experiment setups for use on FPGA development boards. The end product of their work is a package containing a bitstream file and optionally the source files used in the bitstream file's compilation process. This package is referred to as an experimentation package. Figure \ref{fig:process-development-basic} displays a graphical overview of the experiment setup development process. 
 
 \begin{figure}[h]
     \centering
@@ -63,18 +60,18 @@ Experiment setup developers are responsible for the design, implementation, test
 
 
 % TODO onderstaande opsomming is beter op zijn plaats in de problem statement.
-As shown below, an experiment setup developer must have knowledge of a significant number of subjects and technologies: 
+% As shown below, an experiment setup developer must have knowledge of a significant number of subjects and technologies: 
 
-\begin{itemize}
-\item Designing an experiment setup requires knowledge on the subject of digital logic and digital systems. 
-\item For the design to contain meaningful educational content, the developer should have experience in teaching the subject. 
-\item Translating the design into a working, valid implementation in VHDL or Verilog requires experience in HDL development.
-\item Embedding the implemented design in a FPGA development board requires knowledge of the specific FPGA, its development tools and the FPGA's peripheral devices.
-\end{itemize}
+% \begin{itemize}
+% \item Designing an experiment setup requires knowledge on the subject of digital logic and digital systems. 
+% \item For the design to contain meaningful educational content, the developer should have experience in teaching the subject. 
+% \item Translating the design into a working, valid implementation in VHDL or Verilog requires experience in HDL development.
+% \item Embedding the implemented design in a FPGA development board requires knowledge of the specific FPGA, its development tools and the FPGA's peripheral devices.
+% \end{itemize}
 
-\subsection{Experimenters}
+\subsection{Experimentation}
 
-Experimenters are responsible for carrying out experiments. They obtain experiment setup software packages and initialize experiment setups on their FPGA development boards. In order to complete the experiment, they make observations and interact with the experiment setup that is contained within the FPGA. Figure \ref{fig:process-experimentation-basic} displays a graphical overview of the experimentation process. In this basic model, two different methods of interaction are defined: interaction through board I/O devices and interaction through the process of HDL source modification, recompilation and reprogramming. Observation of the experiment's results can be done through the FPGA development board's I/O devices. Some development tools allow for live inspection of the FPGA's internal signal levels through a PC connection.
+Experimenters are responsible for carrying out experiments. They obtain experimentation packages and initialize experiment setups on their FPGA development boards. In order to complete the experiment, they make observations and interact with the experiment setup that is contained within the FPGA. Figure \ref{fig:process-experimentation-basic} displays a graphical overview of the experimentation process. In this basic model, two different methods of interaction are defined: interaction through board I/O devices and interaction through the process of HDL source modification, recompilation and reprogramming. Observation of the experiment's results can be done through the FPGA development board's I/O devices. Some development tools allow for live inspection of the FPGA's internal signal levels through a PC connection and specialized software.
 
 \begin{figure}[h]
     \centering
@@ -85,13 +82,7 @@ Experimenters are responsible for carrying out experiments. They obtain experime
 
 In order for a user to act as an experimenter, one must understand the logic and workings of the obtained experiment setup. Furthermore, an experimenter must understand the basic concepts and role of the FPGA development board, as well as how to program the FPGA via the experimenter's PC. In preparation of the experiment, experimenters must install programming software and operating system drivers for the FPGA development board. In this case, interaction and observation is done through the board's I/O devices. 
 
-Including the PC as a tool for observation and interaction requires additional knowledge and preparation from experimenters. In order to understand and modify the experiment setup's HDL sources, users must be familiar with the programming language used. Recompilation requires users to install and understand the FPGA's development tools in order to set up a proper development environment. Furthermore, this method of interaction will significantly increase the time required for every change to be processed, since the process of recompilation is a slow process. Using the FPGA as a tool for observation requires further familiarization with the FPGA's development tools.
-
-
-
-
-
-
+Including the PC as a tool for observation and interaction requires additional knowledge and preparation from experimenters. In order to understand and modify the experiment setup's HDL sources, users must be familiar with the programming language used. Recompilation requires users to install and understand the FPGA's development tools in order to set up a proper development environment. Furthermore, this method of interaction will significantly increase the time required for every change to be processed, since the process of recompilation is a time consuming process. Using the FPGA as a tool for observation requires further familiarization with the FPGA's development tools.
 
 \section{Virtualizing I/O}
 \label{sectionvirtualizingio}
@@ -116,7 +107,7 @@ In order to support experiment setup entities with a large number of input and o
 
 % Concept controller ook te zien in \cite{jansen2014every}
 
-The controller is a component that acts as an intermediary between the experiment setup logic and an experimenter's PC. The experiment setup's state is observed and controlled through controller-specific software, a method also presented in \cite{holland2003harnessing} and \cite{bulic2013fpga}. A hardware-based method to observe and control the experiment setup's state is described in \cite{al2007teaching}. A software-based solution however, does not increase the cost of the experiment. Furthermore, a software-based approach will allow for more flexibility, as shown in the following sections. 
+The controller is defined to be a component that acts as an intermediary between the experiment setup logic and an experimenter's PC. The experiment setup's state is observed and controlled through controller-specific software, a method also presented in \cite{holland2003harnessing} and \cite{bulic2013fpga}. A hardware-based method to observe and control the experiment setup's state is described in \cite{al2007teaching}. A software-based solution however, allows for a flexible interface as well as a self-contained solution in terms of physical components. 
 
 The controller exposes an additional interface through a communication channel that must be provided by one of the FPGA development board's communication devices, as can be seen in figure \ref{fig:overview-inout}. This interface defines operations that allow for the experiment setup entity's individual input and output signals to be controlled and observed respectively. A similar interface for observation and control of specific signals is described in \cite{holland2003harnessing}. 
 
@@ -129,10 +120,7 @@ The controller exposes an additional interface through a communication channel t
 
 The explicit separation of concerns in the logic architecture allows for separate implementation and validation processes for experiment setup logic, controller logic and PC software. This partitioning subsequently allows for distribution of work among specialists, removing the need for a single experiment developer to have knowledge and experience in all the areas previously described in section  \ref{sectionexperimentdevelopers}. As a consequence of the separation however, more dependencies are introduced into the development process. The development of a controller component requires a definition of the experiment setup's interface and any change in this interface definition requires modification of the controller. A similar dependency exists between the controller and the PC software. A change in the experiment setup entity's interface definition will thus not only result in the need for modification of the controller, but in the need for modification of the PC software as well. These dependencies are addressed and removed from the model in section \ref{sectioncontrollerabstraction}.
 
-Experiment setup interaction through dedicated PC software will simplify the experimentation process for experiment setups with large number of input and output signals. Involving the PC removes the need for experimenters to install and familiarize themselves with the FPGA's development tools. Experimenters will be able to interact with the experiment setup through a graphical interface on the PC, removing the need need for HDL programming skills and allowing for real-time interaction, since no recompilation is required. Since the board's I/O devices have been removed at this stage of the model, there is no possibility for users to physically interact with the experiment. The PC software provides the only means of interaction with the experiment setup. These removed I/O devices however, will be reintroduced into the model in section % \ref{sectionreintroducingio}.
-
-% TODO Hoe ziet de PC software er uit?
-
+Experiment setup interaction through dedicated PC software will simplify the experimentation process for experiment setups with large number of input and output signals. Involving the PC removes the need for experimenters to install and familiarize themselves with the FPGA's development tools. Experimenters will be able to interact with the experiment setup through a graphical interface on the PC, removing the need need for HDL programming skills and allowing for real-time interaction, since no recompilation is required. Since the board's I/O devices have been removed at this stage of the model, there is no possibility for users to physically interact with the experiment. The PC software provides the only means of interaction with the experiment setup.
 
 
 \section{Cycle control}
@@ -142,18 +130,22 @@ Experiment setup interaction through dedicated PC software will simplify the exp
 % TODO: Timing diagram ter verduidelijking clock_enable
 
 \label{sectioncyclecontrol}
-In the previous section, the basic model has been extended to include a definition of the controller. This controller allows for the embedding of experiment setup entities with an arbitrary number of input and output signals that are defined through combinational logic. FPGAs in general lack practically useful support for containment of asynchronous sequential logic, but the availability of a clock signal in the current model does provide support for experiment setup entities that are defined through synchronous sequential logic. However, this clock signal is constant and cannot be varied in speed or temporary stopped. Embedding an experiment setup entity of synchronous sequential logic at this stage of the model would result in an uncontrollable situation of continuous state changes at high speed. This limited control over the clock signal is due to the nature of how FPGAs work and prevents cycle-accurate interaction with the experiment setup. In order to be capable of cycle-accurate observations and control over synchronous sequential experiment setup logic, the model requires further extension.
+% In the previous section, the basic model has been extended to include a definition of the controller. This controller allows for the embedding of experiment setup entities with an arbitrary number of input and output signals that are defined through combinational logic. 
+
+The availability of a clock signal in the current model does provide support for experiment setup entities that are defined through synchronous sequential logic. At this stage of the model's development however, this clock signal is constant and cannot be varied in speed or stopped temporarily. Embedding an experiment setup entity of synchronous sequential logic would result in an uncontrollable situation of continuous state changes at high speed. In order to be capable of cycle-accurate observations and control over synchronous sequential experiment setup logic, the model requires further extension.
 
 \begin{figure}[h]
 \centering
-\caption{Cycle control, an overview of the FPGA and its contained logic architecture. The \texttt{clock\_enable} and \texttt{reset} signals are added to allow for cycle-accurate interaction and (re)initialization.}
+\caption{Cycle control, an overview of the FPGA and its contained logic architecture. The \texttt{Experiment Clock} and \texttt{Reset} signals are added to allow for cycle-accurate interaction and (re)initialization.}
 \label{fig:fpga-control}
 \includegraphics[width=\textwidth]{img/fpga-control}
 \end{figure}
 
-As a solution to the problem stated above, the FPGA's contained logic architecture has been extended, as displayed in figure \ref{fig:fpga-control}. The most significant change is the addition of the \texttt{clock\_enable} input signal on the experiment setup's interface definition. Combined with the \texttt{reset} signal, these new input signals allow for cycle-accurate control and reinitialization of the experiment setup logic's state. The introduction of the \texttt{clock\_enable} signal will require modification of every synchronous memory element present in the experiment setup logic, as displayed in figure \ref{fig:clock-manipulation-enable}. By multiplexing the input signal for every memory element based on the same \texttt{clock\_enable}, one can control the state change in a cycle-accurate manner. The method of using enable signals to control synchronous logic is described in \cite[Sec 2.4.5]{arora2011art}.
+As a solution to the problem stated above, the FPGA's contained logic architecture has been extended, as displayed in figure \ref{fig:fpga-control}. The most significant change is the addition of the \texttt{Experiment Clock} input signal on the experiment setup's interface definition. As described in section \ref{section-fpga-clocking-resources}, a FPGA's clock delivery network generally contains buffers that allow for gating of clock signals. Utilizing this functionality in the controller's implementation will allow for the synthesis of a clock signal with pulses on irregular intervals. Combined with the \texttt{Reset} signal, these new input signals allow for cycle-accurate controlling and reinitialization of synchronous sequential logic contained within the experiment setup's logic.
 
-One may argue that this approach is unfavourable, since it requires modification of existing experiment setup logic designs. This method for controlling state change however, is a common approach in FPGA-targeted HDL development and is used in many designs. More specifically, this approach was also taken in controlling the experiment setups described in \cite{holland2003harnessing} and \cite{bulic2013fpga}. As stated before, FPGAs do not allow for dynamic manipulation of clock signals by design, a method known as clock gating (figure \ref{fig:clock-manipulation-gated} ). Clock signals are distributed over the FPGA through dedicated lines that cannot be altered through HDL logic. Some manufacturers include support for static clock division, but still only down to relatively high speeds and do not allow for dynamic adjustment of clock speed [TODO: Bron]. 
+% The introduction of the \texttt{clock\_enable} signal will require modification of every synchronous memory element present in the experiment setup logic, as displayed in figure \ref{fig:clock-manipulation-enable}. By multiplexing the input signal for every memory element based on the same \texttt{clock\_enable}, one can control the state change in a cycle-accurate manner. The method of using enable signals to control synchronous logic is described in \cite[Sec 2.4.5]{arora2011art}.
+
+% One may argue that this approach is unfavourable, since it requires modification of existing experiment setup logic designs. This method for controlling state change however, is a common approach in FPGA-targeted HDL development and is used in many designs. More specifically, this approach was also taken in controlling the experiment setups described in \cite{holland2003harnessing} and \cite{bulic2013fpga}. As stated before, FPGAs do not allow for dynamic manipulation of clock signals by design, a method known as clock gating (figure \ref{fig:clock-manipulation-gated} ). Clock signals are distributed over the FPGA through dedicated lines that cannot be altered through HDL logic. Some manufacturers include support for static clock division, but still only down to relatively high speeds and do not allow for dynamic adjustment of clock speed [TODO: Bron]. 
 
 % TODO: Opmerking Taco 
 % Opmerking bij fig 3.8 discussie. Het board dat je gebruikt is een artix7
@@ -163,54 +155,35 @@ One may argue that this approach is unfavourable, since it requires modification
 
 % TODO: Toto: Meer uitleg bij deze figuren
 
-\begin{figure}[h]
-    \centering
-    \caption{Controlling state transitions through a clock enable signal and a gated clock signal.}
-    \label{fig:clock-manipulation}
-    \begin{subfigure}[t]{0.5\textwidth}
-        \centering
-        \caption{Gated clocks}
-        \label{fig:clock-manipulation-gated}
-        \includegraphics[height=1.5in]{img/clock-manipulation-gated}
-    \end{subfigure}%
-    \begin{subfigure}[t]{0.5\textwidth}
-        \centering
-        \caption{Enable signal}
-        \label{fig:clock-manipulation-enable}
-        \includegraphics[height=1.5in]{img/clock-manipulation-enable}
-    \end{subfigure}%
-\end{figure}
-
-In order to make this newly developed functionality available to the experimenter through the PC software, the controller interface is extended to support new operations that allow for the control of cycles. As displayed in figure \ref{fig:overview-control}, five new operations are available through the controller's interface. The \texttt{Controller.Reset()} operation (re)initializes the experiment setup to it initial state and waits for the next operation. Experimenters have manual control over the experiment setup's cycles through the \texttt{Controller.Step()} operation. The controller may also be instructed to manage the experiment setup autonomously through the \texttt{Controller.Start()} operation. The maximum operating frequency may be defined through the \texttt{Controller.LimitSpeed()} operation. The \texttt{Controller.Stop()} operation stops the controller's autonomous management of the experiment setup and awaits the next operation. Similar interfaces for cycle-accurate control of experiment setups are described in \cite{holland2003harnessing} and \cite{bulic2013fpga}.
+% \begin{figure}[h]
+%     \centering
+%     \caption{Controlling state transitions through a clock enable signal and a gated clock signal.}
+%     \label{fig:clock-manipulation}
+%     \begin{subfigure}[t]{0.5\textwidth}
+%         \centering
+%         \caption{Gated clocks}
+%         \label{fig:clock-manipulation-gated}
+%         \includegraphics[height=1.5in]{img/clock-manipulation-gated}
+%     \end{subfigure}%
+%     \begin{subfigure}[t]{0.5\textwidth}
+%         \centering
+%         \caption{Enable signal}
+%         \label{fig:clock-manipulation-enable}
+%         \includegraphics[height=1.5in]{img/clock-manipulation-enable}
+%     \end{subfigure}%
+% \end{figure}
 
 \begin{figure}[h!]
 \centering
-\caption{Cycle control, an overview of the FPGA development board. The controller's interface is extended with operations that allow for cycle-accurate interaction with the experiment setup.}
+\caption{Cycle control, an overview of the FPGA development board. The controller's interface is extended with operations that allow for cycle-accurate operation of the experiment setup.}
 \label{fig:overview-control}
 \includegraphics[width=\textwidth]{img/overview-control}
 \end{figure}
 
+In order to make this newly developed functionality available to the experimenter through the PC connection, the controller's interface is extended to support new operations that allow for the control of cycles. As displayed in figure \ref{fig:overview-control}, four new operations are available through the controller's interface. The \texttt{Controller.Reset()} operation (re)initializes the experiment setup to it initial state and waits for the next operation. Experimenters have manual control over the experiment setup's cycles through the \texttt{Controller.Step()} operation. The controller may also be instructed to manage the experiment setup autonomously through the \texttt{Controller.Start()} operation. The \texttt{Controller.Pause()} operation stops the controller's autonomous management of the experiment setup and awaits the next operation. Similar interfaces for cycle-accurate control of experiment setups are described in \cite{holland2003harnessing} and \cite{bulic2013fpga}.
 
 
-% TODO: Students must be able to disconnect from the PC and consider the setup as an autonomous entity. The controller interface needs to be extended with a PLAY/PAUSE instruction as well as a means to set the experiment setups clock speed. There needs to be the distinction between a slave mode when connected to the pc as well as a autonomous mode when disconnected.
-
-
-% \subsection{FPGA Clock management}
-% FPGAs generally run on a single clock signal. On modern FPGAs, this clock signal has a frequency in the order of megahertz, which would result in the execution of the experiment at millions discrete steps per second. This clock is generally fixed. In order for students to be able to control their clock speed or even pause their experiment for observations, a second signal must be introduced into the experiment, allowing the enabling of a clock signal. By enabling this 'clock enable' signal for the duration of one clock cycle, the experiment progresses one discrete time step. A disadvantage of this approach is that experiments must be adapted to support this method of managing clocks. This approach however is commonly seen in industry IP components.
-
-% DCM is unsuitable, because it does not allow for halting of the clock signal as well as running on very low frequencies.
-
-% Experiments requiring async clocks can fake this behaviour by deriving a 'clock enable' using a counter.
-
-% See figure \ref{fig:fpga-control}.
-
-
-
-
-
-
-
-\section{Board Component Abstraction}
+\section{Experiment Setup Interface Generalization}
 \label{sectioncontrollerabstraction}
 
 % TODO: Taco: Hoe ga je de inhoud van complexe memory devices inzichtelijk maken?
@@ -222,103 +195,151 @@ In order to make this newly developed functionality available to the experimente
 % TODO: Taco: Uiteindelijke functionele omschrijving controller ontbreekt nog
 
 % At this stage of the model's development, it supports the embedding of experiment setups defined through combinational logic as well as synchronous sequential logic. Experimenters can interact with these experiment setups through PC software that is specifically developed for the experiment setup. 
-While the model has developed to address a number of problems encountered by experimenters, the problems experienced during development have only been addressed partially. Although an architecture for the FPGA's contained logic was developed in the previous sections, a series of dependencies can still be identified in the development process, as displayed in figure \ref{fig:dependencies-control}.  
-
-The source of these dependencies is the interface between controller and experiment setup. This interface is specific for every experiment setup. By defining a standard interface between experiment setup and controller, this dependency is removed. In the current approach, the experiment setup is considered an entity with inputs and outputs, supplemented by a clock signal, a clock\_enable signal and a reset signal. 
+While the model has developed to address a number of problems encountered by experimenters, the problems experienced during development have only been partially addressed and tight coupling between logic architecture's components is still present. The source of these dependencies is the interface between controller and experiment setup logic, since every experiment setup has a unique interface. Through the establishment of a generic definition for the interface between experiment setup logic and the controller, this dependency is removed, allowing for reuse of board-specific logic in the development of different experimentation packages. 
 
 \subsection{Address Space}
-%TODO zinnen verbeteren, nog redelijk vaag
-% TODO waarom is de keuze voor het model van een address space een goede keuze?
-In order to be able to provide a generic interface between controller and experiment setup logic, the experiment setup's interface is modified such that it resembles the interface of a block ram, as can be seen in figure \ref{fig:interface-experiment}. The experiment setup's signals are projected on the address space. 
+This thesis proposes an address space as a means of interaction with an experiment setup's input and output signals. More specifically, an address space is defined to be a virtual array of uniquely-addressed memory slots of equal size, a model equal to that of a computer's memory. The address space features the \texttt{read(address)} and \texttt{write(address, value)} operations, allowing for interaction. The model of an address space was chosen due to its compatibility with the problem of providing a generic approach to interaction with a statefull element, as well as computer scientists' familiarity with this model of representing state. This abstraction removes the tight coupling that existed between the controller and the experiment setup, since the unique relation between these two components no longer exists.
 
-Losing the information about which signal is which is irrelevant to proper operation of the controller. In order for the PC software to be of any practical use however, a definition of this memory space is required, such that the individual signals can be identified from the memory space. 
-
-The controller does no longer provide an interface to the experiment setup, but acts as a proxy to control the experiment setup's interface. This does not only allow for a reuse of controlling logic, but a simplification as well, since the interface that is exposed to the controller is simplified as well.
-
-\subsection{Interface}
-% TODO waarom is een BRAM interface een goede keuze?
-%  - eenvoud
-% TODO wat zijn de verschillen/voordelen/nadelen t.o.v. andere businterfaces zoals wishbone, AXI etc.
-% - wishbone zou een goede optie kunnen zijn ivm open source
-% - hoge leercurve bus interfaces
-% - master slave interface is voldoende
-% - bus interfaces zijn vaak nodeloos complex
-% - begrip interface is wijdversprijd
-% - ik had niet de capaciteiten om uitgebreid de mogelijke aanvullende voordelen van een businterface te bestuderen, terwijl deze interface voldoende biedt.
-
-
+In order for an address space's individual slot to correspond to specific input or output signals, the signals are projected onto the experiment setup's address space. Figure \ref{fig:signal-address-projection} displays an example of such a projection. As can be observed, all of the experiment setup's input and output signals are projected onto the address space, except for the \texttt{clock} and \texttt{reset} input signals, which are separately driven by the controller. Experiment setup signals whose width exceeds that of the address space's individual memory slots are spread over multiple slots, spanning multiple addresses. Every signal corresponds to at least one unique address.
 
 \begin{figure}[h]
     \centering
-    \caption{Interfaces}
+    \caption{Signal projection for a 12-bit counter experiment setup. In this example, the data bus is defined to have a width of 8 bits and the address bus is defined to have a width of 2 bits, defining 4 addresses.}
+    \label{fig:signal-address-projection}
+    \includegraphics[width=0.8\textwidth]{img/signal-address-projection}
+\end{figure}
+
+As displayed in figure \ref{fig:fpga-abstract}, in addition to the experiment setup's primary logic, the logic architecture defines a secondary component that facilitates the projection of the experiment setup's signals on its address space. In order to allow for clear distinction between the different components, this new component is referred to as the experiment setup wrapper. The experiment setup wrapper has been given its name since it "wraps" around the experiment setup logic's input and output signals.  Additionally, the experiment setup's logic combined with this newly defined experiment setup wrapper is collectively referred to as the experiment setup component.
+
+\begin{figure}[h]
+\centering
+\caption{Experiment setup interface generalization, an overview of the logic architecture contained within the FPGA.}
+\label{fig:fpga-abstract}
+\includegraphics[width=.8\textwidth]{img/fpga-abstract}
+\end{figure}
+
+\subsection{Logic Interface}
+In order to facilitate the address space abstraction, the experiment setup component's interface definition is modeled to resemble the interface of a simple block ram memory element. As displayed in figure \ref{fig:interfaces}, the experiment setup component's interface extends the block ram's interface with a \texttt{reset} input signal as well as an additional clock signal labeled \texttt{experiment clock}. This clock signal was introduced in the previous section for cycle-accurate control over the experiment setup logic. The second clock input labeled \texttt{clock} is a clock input whose signal is equal to that of the controller's. This clock signal allows for the operation of synchronous logic facilitating the address space projection.
+
+\begin{figure}[h]
+    \centering
+    \caption{A comparison between the interfaces of a block ram and the experiment setup component.}
     \label{fig:interfaces}
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \caption{Single-port block ram, derived from \cite[Ch.1]{ug473}}
+        \caption{Single-port block ram, derived from \cite[Ch.1]{ug473}.}
         \label{fig:interface-bram}
         \includegraphics[height=1.2in]{img/interface-bram}
     \end{subfigure}%
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \caption{Experiment setup interface}
+        \caption{Experiment setup component interface.}
         \label{fig:interface-experiment}
-        \includegraphics[height=1.5in]{img/interface-experiment}
+        \includegraphics[height=1.2in]{img/interface-experiment}
     \end{subfigure}
 \end{figure}
+
+Additional to the similarities in interface signature, the experiment setup's interface is defined to have a behaviour similar to that of a block ram as well. Figure \ref{fig:timing-bram} displays a timing diagram that describes the experiment setup's signal behaviour for the \texttt{read()} and \texttt{write()} operations. Both operations are defined to take effect on rising clock edges, thus requiring the \texttt{data out} signal's levels to be buffered. 
 
 \begin{figure}[h]
     \caption{Timing diagram for experiment setup logic, derived from \cite[Fig.1-2]{ug473}}
     \label{fig:timing-bram}
     \centering
-    \includegraphics[width=\textwidth]{img/timing-bram}
+    \includegraphics[width=0.85\textwidth]{img/timing-bram}
 \end{figure}
 
-\subsection{Memory devices}
-%TODO sectie verbeteren, nog erg vage zinnen.
-
-The experiment setup has been considered to be an entity with input output signals. Any memory elements contained within the experiment setup can be made accessible through these input and output signals. This solution is not very scalable however. In order to allow for the controller to read and write to large memory elements such as block rams and register files, a different solution is required. A solution to this problem is displayed in figure \ref{fig:logic-wrap-extended}. 
-
-A simple wrapper can be computer-generated in many cases. If complex memory devices are contained within the experiment setup, a wrapper can be defined manually, using an experiment setup adapter component, address space splitters and memory interface multiplexers. 
-
-Large memory elements such as register files and block rams may be defined in HDL. During the compilation process, these elements are infered from HDL code and the FPGA's internal block rams are used. 
-
-% If more memory space is required however, external memory devices such as DDR RAM IC's may be required. Since these external RAM devices require a number of cycles in order to accress the data, they must be abstracted in order to be accessible from within the experiment setup logic. In order to achieve the desired effect of seeing these DDR RAM devices as block ram devices that only require a single clock cycle to operate, the controller must stall the \texttt{clock\_enable} signal until the DDR controller finishes the desired operation. 
-
-
-\subsection{Composition Process}
-In stead of the distinction between controller and experiment setup, a new separation is defined in the controller's logic architecture. A distinction is made between the logic that is targeted to a specific FPGA development board and the logic that targets the standard board component interface. Figure \ref{fig:fpga-abstract} displays this distinction. This distinction is made, because the experiment setup is no longer being defined by it's primary logic, but as secondary interfacing logic as well. 
-
-% The controller was defined to be a specific implementation embedding a specific experiment setup into a FPGA development board.
+\subsection{Generic Controller Interface}
+A major advantage of the generic interface between the controller and the experiment setup component is that this can be directly translated into a generalization of the controller's command interface as well. As displayed in figure \ref{fig:overview-abstract}, the controller interface as exposed through the PC connection is modified such that the operations for signal interactions have been replaced by the \texttt{Controller.Read()} and \texttt{Controller.Write()} operations for interaction with the experiment setup component's address space. 
 
 \begin{figure}[h]
 \centering
-\caption{Controller abstracted, FPGA logic design}
-\label{fig:fpga-abstract}
-\includegraphics[width=.8\textwidth]{img/fpga-abstract}
+\caption{Experiment setup interface generalization, an overview of the FPGA development board. The controller's interface no longer features direct control over specific experiment setup signal levels, but now features operations for interaction with the experiment setup's address space.}
+\label{fig:overview-abstract}
+\includegraphics[width=\textwidth]{img/overview-abstract}
 \end{figure}
 
-A new process is defined for the composition of board component and experiment setup component into a bitstream file. This results in the processes of experiment setup development and board component development to become independent. Figure \ref{fig:dependencies-abstract} displays the composition process and its relation to the  development processes for experiment setup component and board development component in terms of dependencies. 
+Since the address space itself does not describe the experiment setup logic signals' projection, additional information is required for sensible interaction with the experiment setup component. The concept of an address space description is introduced, providing information about how the experiment setup's signals are projected on the experiment setup component's address space. 
 
-\subsection{Experiment Setup Adapter}
+\subsection{Processes}
+Figure \ref{fig:processes-abstract-development} displays an overview of the process for the development of new experimentation packages. The experiment setup logic's HDL sources as well as the experiment setup wrapper's HDL sources are developed and composed to collectively define the experiment setup component's HDL sources. As part of the development of the experiment setup's wrapper, a description of the experiment setup's address space is created as well. 
 
-In order for an experiment setup logic to conform to the experiment setup component's interface, a component is introduced that acts as an adapter. This experiment setup adapter is a logic component that projects the experiment setup's input and output signals onto an address space. Figure \ref{fig:fpga-abstract} displays the experiment setup adapter.
+The generalization of the experiment setup component interface allows for modification of the development process. It allows for independent development of board-specific controller logic HDL sources. The definition of a generic interface allows thus for these sources to be reused in the development of different experimentation packages. The comtroller's sources are combined with the experiment setup component's HDL sources in order to define the experimentation package's complete set of HDL sources. These sources can then be taken through the FPGA's compilation in order to generate a bitstream file. This bitstream file is then packaged with an description of the address space, in order to form an experimentation package.
+
+\begin{figure}[h]
+    \caption{ Experiment setup interface generalization, an overview of the experimentation package development process. The process allows for the reuse of controller HDL sources in the development of different experimentation packages.}
+    \label{fig:processes-abstract-development}
+    \centering
+    \includegraphics[width=\textwidth]{img/processes-abstract-development}
+\end{figure}
+
+The experimentation process as displayed in figure \ref{fig:processes-abstract-experimentation} is extended to include the experiment setup's address space description in the initialization of the exeriment setup, in order to allow for meaningful interpretation of the experiment setup's address space. 
+
+\begin{figure}[h]
+    \caption{ Experiment setup interface generalization, an overview of the experimentation process.}
+    \label{fig:processes-abstract-experimentation}
+    \centering
+    \includegraphics[width=\textwidth]{img/processes-abstract-experimentation}
+\end{figure}
 
 
+\section{Development Process Automation}
+\label{sectiondevelopmentprocessabstraction}
 
+Due to the previous section's modifications, the experimentation package development process has become more complex. In order to reduce the process' complexity, this thesis' model definition is extended with two new abstract operations that combine a significant part of the process' operations. Additional to reducing the experimentation package development process' complexity, these new abstract operations allow be executed in an automated fashion.
 
-\subsection{Generic PC Software}
-A major advantage of the generic interface between the controller and experiment setup is that PC software can be developed that is no longer specifically tied to one particular experiment setup design. The controller now acts as a proxy between the PC and the experiment setup. The experiment setup is considered an address space from the PC software, no longer an entity with inputs and outputs. In order for this address space to be of any significant meaning, the PC software requires information on how the data in this address space is structured. During the wrapping process a file will be generated, describing how the experiment setup's signals are projected onto its address space. 
+As displayed in figure \ref{fig:processes-abstract-automation-overview}, the experimentation package development process has been divided into three subsequent subprocesses: experiment setup logic development, experiment setup wrapping and the component composition. The detailed contents of these subprocesses are displayed in figure\ref{fig:processes-abstract-automation}. 
+
+\begin{figure}[h]
+    \caption{A high-level overview of the experimentation package development process. The process has been divided into three subprocesses in order to allow for automation.}
+    \label{fig:processes-abstract-automation-overview}
+    \centering
+    \includegraphics[width=\textwidth]{img/processes-abstract-automation-overview}
+\end{figure}
+
+\begin{figure}[h]
+    \caption{A detailed overview of the experimentation package development process' subprocesses.}
+    \label{fig:processes-abstract-automation}
+    \centering
+    \includegraphics[width=\textwidth]{img/processes-abstract-automation}
+\end{figure}
+
+\subsection{Component Composition}
+\label{sectioncomponentcomposition}
+Since the board-specific controller sources can now be considered static across the development processes of different experimentation pacakges, a large part of the experimentation package development process' is composed of actions that are similar accross different projects. 
+
+As an interface to this subprocess, the concept of an experiment setup package is introduced into the model's definition. This package acts as a unit of containment for the experiment setup component's HDL sources that was produced by the experiment setup wrapping process. Additional to the experiment setup's HDL sources, the package contains a description of the experiment setup's address space projection. This subprocess combines the user-defined sources from the input package with controller sources and processes these through the FPGA's toolchain. The resulting bitstream file is then pacakged into an experimentation package, together with the provided address space description.
+
+The introduction of the component composition subprocess significantly reduces the complexity of the experimentation package development process. Due to the automated execution of its actions, these can be reduced to the abstract concept of component composition. The process abstracts the actions that relate to the FPGA and its toolchain, thus relieving the developer from the requirement of familiarizing itself with these tools and the related concepts.
+
+\subsection{Experiment Setup Wrapping}
+\label{sectionexperimentsetupwrapping}
+The generalized interface between the experiment setup component's logic and the controller require users to adapt the experiment setup logic's interface through address space projection. This process of wrapping an experiment setup's logic may be automated through source code analysis and source code generation. The potential for automated execution of this subprocess further reduces the complexity of the experimentation package's development process. Through the abstraction of this subprocess' operations, the adaption of adapting experiment setup logic to match the model's generic interface is reduced to a single operation.
+
+The experiment setup wrapping process as well as the component composition package are defined to be two separate processes. Although these subsequent processes may be combined into one automated operation, they have been defined as separate. In order to allow for advanced address space projections or wrapping logic that cannot be generated automatically, these processes have been defined as separate. 
+
+% \subsection{Wrapping}
+% The process of defining this experiment setup wrapping logic is thus named the "wrapping" process. As previously explained, this wrapper is composed of the logic that projects the experiment setup logic's input and output signals onto the experiment setup component's address space.
+
+% A distiction can be made between experiment setup logic input and output signals, since both signals' levels can be determined through the address space \texttt{read()} operation, while only an input signal's level can be set through the address space's \texttt{write()} operation. \texttt{Write()} operations targeted at addresses on which an output signal has been projected have no effect. 
+
+% Experiment setup input signals are driven by statefull elements contained within the experiment setup wrapper, whose signal level may be modified through a \texttt{write()} operation targeted at the corresponding address.
+
+% The wrapping process can be automated, so even though it requires additional work from the experiment setup developer, but the 
+
+% \subsection{Memory devices}
+% %TODO sectie verbeteren, nog erg vage zinnen.
+
+% The experiment setup has been considered to be an entity with input output signals. Any memory elements contained within the experiment setup can be made accessible through these input and output signals. This solution is not very scalable however. In order to allow for the controller to read and write to large memory elements such as block rams and register files, a different solution is required. A solution to this problem is displayed in figure \ref{fig:logic-wrap-extended}. 
+
+% A simple wrapper can be computer-generated in many cases. If complex memory devices are contained within the experiment setup, a wrapper can be defined manually, using an experiment setup adapter component, address space splitters and memory interface multiplexers. 
+
+% Large memory elements such as register files and block rams may be defined in HDL. During the compilation process, these elements are infered from HDL code and the FPGA's internal block rams are used. 
+
+% If more memory space is required however, external memory devices such as DDR RAM IC's may be required. Since these external RAM devices require a number of cycles in order to accress the data, they must be abstracted in order to be accessible from within the experiment setup logic. In order to achieve the desired effect of seeing these DDR RAM devices as block ram devices that only require a single clock cycle to operate, the controller must stall the \texttt{clock\_enable} signal until the DDR controller finishes the desired operation. 
 
 % iets zeggen over de faciliterende interface tussen PC en 
 
 
-
-\begin{figure}[h]
-\centering
-\caption{Controller abstracted, overview}
-\label{fig:overview-abstract}
-\includegraphics[width=\textwidth]{img/overview-abstract}
-\end{figure}
 
 
 %variable address width

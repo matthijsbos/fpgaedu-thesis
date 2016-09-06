@@ -10,77 +10,71 @@
 % - infer block ram during compilation
 
 \section{Field-programmable gate arrays}
-Field-programmable gate arrays (FPGAs) are a class of integrated circuits (IC) which' behaviour is reconfigurable, as opposed to application specific integrated circuits (ASIC). In their most common form, FPGAs consist of blocks of configurable logic which are interconnected through a configurable network. Many manufacturers combine CLBs with additional static functionality such as memories, I/O controllers and even embedded microprocessors. Which static features are included differs per FPGA model and manufacturer. Figure \ref{fig:fpgastructure} gives a structural overview of a FPGA as manufactured by Xilinx. It shows a number of CLBs, interconnected with I/O blocks (IOB) that connect IC package pins and block rams (BRAM) which serve as static blocks of memory. The digital clock manager (DCM) is responsible for the distribution of clock signals to every of the FPGA's blocks. 
+Field-programmable gate arrays (FPGA) are a class of integrated circuits (IC) which' behaviour is reconfigurable, as opposed to application specific integrated circuits (ASIC). In general, FPGAs consist of blocks of configurable logic which are interconnected through a configurable network. While some of a FPGA's physical pins are reserved, a majority of a FPGA's pins are generally available to user I/O and are exposed internally through I/O blocks (IOB). Manufacturers combine configurable logic blocks (CLB) with additional static functionality ranging from primitives such as memory elements to complex functionality such as embedded microprocessors. The included static functionality differs per FPGA model and manufacturer and many different variations currently exist, targeted at various applications.
 
-A CLB's contained logic is described through an internal lookup table in which 
-
-\begin{figure}
-\centering
-\includegraphics[width=.7\textwidth]{img/fpga-block-structure}
-\caption{Structural FPGA overview}
-\label{fig:fpgastructure}
+\begin{figure}[h]
+    \centering
+    \caption{A basic view of a FPGA configurable logic block, derived from \cite{Kallstrom2010fpga}. The block supports synchronous operation through the integrated flip-flop (FF).}
+    \label{fig:fpga-clb}
+    \includegraphics[width=0.7\textwidth]{img/fpga-clb}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=.7\textwidth]{img/fpga-clb}
-\caption{FPGA CLB example overview}
-\label{fig:my_label}
+In its most primitive form, a FPGA CLB can be described as a lookup table (LUT) whose output is optionally buffered by a flip-flop, as displayed in figure \ref{fig:fpga-clb}. The LUT can be configured to capture combinational logic and the flip-flip is added in order to support synchronous operation such that the CLB can be configured to capture synchronous sequential logic. This simplistic view does not represent the CLBs as used in the designs of FPGA manufacturers, however. As can be seen in \cite{ug474}, a Xilinx 7 series FPGA's CLBs are significantly more complex. Manufacturers include more functionality in CLB designs such that these can be used more efficiently to serve as memory elements or perform arithmetic operations, for example.
+
+\begin{figure}[h]
+    \centering
+    \caption{A basic view of a FPGA's architecture, derived from \cite[Fig.2]{szedoAboutFpgas}. CLBs are aligned in a symmetrical array. The gray boxes and interconnecting lines represent the FPGA's configurable interconnects. The blue lines represent the FPGA's clock delivery network. I/O blocks (IOB) serve as entry points to FPGA pins.}
+    \label{fig:fpga-architecture}
+    \includegraphics[width=\textwidth]{img/fpga-architecture}
 \end{figure}
 
+In order to combine multiple blocks of logic, CLB inputs and outputs need to be interconnected. FPGA manufacturers adopt different topologies in designing their CLB interconnect networks. Although different in structure, these networks share the capability of being reconfigurable such that routes may be defined between different blocks' input and output ports. Figure \ref{fig:fpga-architecture} displays a FPGA architecture in which the CLBs and their interconnects are aligned in a symmetrical array structure. As described in \cite[Fig.2]{szedoAboutFpgas}, other topologies can be adopted as well. Row-based and hierarchical structures for example, are other types of structures adopted by manufacturers in their FPGA designs.  
+
+\section{FPGA Clocking Resources}
+\label{section-fpga-clocking-resources}
+In order for CLBs to be configured as elements of synchronous sequential logic, the CLB requires a clock input signal. Distributing this clock signal through the configurable CLB interconnect network however, causes an unpredictable amount of clock skew accross different CLB clock inputs. In order to overcome this unpredictability, FPGAs are generally equipped with a dedicated clock delivery network. The blue lines in figure \ref{fig:fpga-architecture} represent such a clock delivery network. Manufacturers adopt different design strategies in order to minimize clock skew accross their FPGAs. As can be seen in \cite{cv5v2} for example, the Altera Cyclone V class of FPGAs feature a clock delivery network that is defined hierarchically. 
+
+Additional to dedicated logic for clock delivery, current FPGAs generally offer some configurable functionality for synthesis, selection and manipulation of clock signals. Several independent clock signals of different frequencies can be derived from a base signal through multiplication and routed to different sections on the FPGA. This base signal is usually provided by an external clock generating device. Besides clock synthesis and routing, FPGAs generally feature buffers that allows for 'gating' of clock signals through which a specific clock signal may be (regionally) disabled through user-defined logic. The technique of clock gating is generally used to disable state transitions in a particular section of an IC in order reduce power consumption. In this thesis however, this technique will be utilized to generate clock pulses with irregular intervals.
+
+% Figure \ref{fig:fpgastructure} gives a structural overview of a FPGA as manufactured by Xilinx. It shows a number of CLBs, interconnected with I/O blocks (IOB) that connect IC package pins and block rams (BRAM) which serve as static blocks of memory. The digital clock manager (DCM) is responsible for the distribution of clock signals to every of the FPGA's blocks. A CLB's contained logic is described through an internal lookup table in which 
+
+% \begin{figure}
+% \centering
+% \includegraphics[width=.7\textwidth]{img/fpga-block-structure}
+% \caption{Structural FPGA overview}
+% \label{fig:fpgastructure}
+% \end{figure}
+
+% \begin{figure}
+% \centering
+% \includegraphics[width=.7\textwidth]{img/fpga-clb}
+% \caption{FPGA CLB example overview}
+% \label{fig:my_label}
+% \end{figure}
 
 
-\subsection{I/O capabilities}
-A FPGA development board generally includes a number of I/O devices. Simple devices for input include buttons and switches, while simple output devices are generally LEDs or LED displays. Furthermore, a development board often includes a set of pin headers, which can be configured individually to be input or output ports. 
 
-More complex I/O devices are included as well. Such as VGA output controllers, microphone, Ethernet, USB, .... These devices operate within strict timing constraints in order to work properly. This prevents the experiment setup from properly using the device, since it runs on a irregular, low frequency. 
+\section{FPGA Development Process}
+% The FPGA development process is targeted at the creation of a new FPGA configuration. 
 
-Buffering (right term?) of some types of input, such as push buttons. When a user presses a push button while the experiment is halted, the signal should be artificially set to be high during the next cycle.
+Developers generally define their designs' logic on a register-transfer level (RTL) through some hardware definition language (HDL), such as Verilog or VHDL. In order for these designs to be translated into a FPGA configuration, these designs are first processed by a logic synthesizer. The goal of the logic synthesis process is to translate the hierarchical RTL logic representation into a 'flat' netlist representation which is composed of elements that correspond with FPGA primitives.
 
-I/O devices can only be seen as combinational circuits. I/O devices that are based on sequential logic, such as a LED display controller, an abstraction needs to be created such that the device behaves like a combinational circuit. 
+In order to translate the primitive netlist representation into a FPGA configuration, the design is processed in the implementation process. During this process, the netlist primitives are first mapped onto FPGA elements, but not assigned to a location yet. Users are generally capable of controlling the implementation process through specification of constraints, such as specific timing requirements. After succesfully mapping, the exact location has to be determined such that routes between the elements' inputs and outputs can be established while satisfying the user-defined constraints. This process of finding a suitable combination of locations and routes is generally the most time-consuming of all operations. Once successful, the configuration is written to a FPGA-specific binary format such that is suitable for programming the FPGA. This type of file is commonly referred to as a bitstream file. 
 
-\subsection{Programming}
-Generally speaking, FPGA development board come equipped with dedicated hardware for the purpose of programming. 
-
-% Current FPGAs generally make use of the IEEE 1532 standard for in-system programming, which extends the IEEE 1149.1 'JTAG' boundary scan protocol. In order to program these FPGAs, one makes use of dedicated JTAG programming hardware and software. Such hardware and software is commonly available.  
-
-% FPGA development board manufacturers generally integrate JTAG programming hardware in their designs, allowing progamming over a serial connection to their PC, such as USB. Manufacturers combine their development boards with software development kits that facilitate the operating system drivers and software required for the programming process. Other means of programming are seen as well, such as support for USB storage devices or memory cards on which a file is placed that is automatically read by the development board and programmed onto the FPGA. FPGA development boards generally feature a JTAG interface as well, allowing for a custom method of programming using external tools. 
-
-\subsection{PC Communication}
-In order to allow for communcation with a PC, FPGA development board manufacturers generally include one or more communication interfaces in their board designs. Many FPGA development boards currently available come with a USB interface over which a virtual serial interface is exposed, commonly known as a virtual COM port. The serial signal is often controlled by a UART implementation that is programmed onto the FPGA. Other examples of communcation interfaces are RS232 and Eternet ports, where dedicated hardware components on the FPGA development board are responsible for translating signal levels controlled in the FPGA to interface standard levels. 
+Although some third-party synthesis tools are available, the implementation process is generally facilitated by proprietary tools supplied by the FPGA's manufacturer, since many of the implementation process' details are based on proprietary information. Manufacturers generally bundle their development tools into a software development kit (SDK) which includes an integrated development environement (IDE) for interacion with these tools through a graphical interface. Even though the graphical interface is often a developer's primary means of interaction, scripted operation of these development tools is possible as well. The development tools developed as part of this thesis focus on scripted operation of the FPGA development process.
 
 
-\subsection{Clock Distribution}
+\section{FPGA Development Boards}
+FPGAs are used in a wide range of products in which they are statically configured to perform specific tasks. There is a class of products however, that preserves the FPGA's reconfigurable behaviour and exposes this functionality directly to its end users. These products are typically used for development of new logic configurations and essentially serve as a tool during the development process. A FPGA development board generally includes a number of I/O devices for human interaction, sensory input or machine-to-machine communication. These devices range from simple LEDs and switches to external ICs with advanced functionalities. Furthermore, FPGA development board are generally equipped with pins for general purpose I/O with external devices. FPGA development boards range from boards with simple, general-purpose peripheral devices from boards with high-end components targeted at specific goals, such as digital signal processing.
 
-\section{FPGA Development Toolchain}
+One class of I/O devices that will prove of particular relevance to this thesis are the devices used for board-to-PC communication. FPGA development boards generally include some means to support the establishment of a serial point-to-point communication channel. The board generally features the electronics that allow physical compatibility with the communication medium, while the remaining higher-level logic such as an UART, is implemented in the user-defined logic contained within the FPGA. Traditionally, board-to-PC communication was often established through a RS-232 connection, but current development boards generally allow for establishing a virtual point-to-point communication channel over USB through a USB-UART bridge. Additional to a USB interface, modern boards are often equipped with an Ethernet interface as well, allowing for networked communication.  
 
-\subsection{Synthesis}
-Synthesis is the process of translating a HDL design to a desired primitive unit. Logic gates, CLB's.
+\section{FPGA Configuration}
 
-\subsection{Place \& Route}
+FPGAs generally reserve a number of pins for the purpose of configuration. The terms programming and configuration may be used interchangeably. Current FPGAs generally make use of the IEEE 1532 standard for in-system programming, which extends the IEEE 1149.1 'JTAG' boundary scan protocol. Although some boards require third-party programming hardware, current FPGA development boards often include some form of programming circuitry that allows for reconfiguration of the FPGA through the user's PC.
 
-\subsection{Bitstream Generation}
+Although the FPGA's programming interface may often be considered universal, the PC software required for programming is generally targeted at specific proramming hardware. However, FPGA manufacturers often bundle programming drivers for their and their third party partners' boards in their SDKs. Additionally, FPGA manufacturers such as Xilinx and Altera provide smaller 'lab' editions of their SDKs that only include the tools and drivers required for configuration. Through these programming tools, the user is capable of uploading a bitstream file that was previously created during the development process.
 
-\section{Software Development Kits}
-
-\section{Hardware Description Languages}
-
-
-% FPGA
-% Eductional
-% Computer architecture
-% PC
-% Instruction level view
-% MIPS 
-
-% Introduction
-% Problem description
-% Related work
-% Educational softcores
-% 
-% FPGA fundamentals
-% - toolchain
-% 
 
 
 \end{document}

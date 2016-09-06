@@ -1,24 +1,44 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\chapter{Conclusion and Discussion}
+\chapter{Conclusion}
 
 \section{Conclusion}
+Through the development of a model, this thesis has presented a solution to the problems experienced in the application of FPGA development boards as a tool for experimentation. This thesis' model for the development of new experiment setups has shown to allow for reuse of components through the adoption of the concept of an address space. This concept is effective in the removal of the tight coupling between experiment logic and experiment controlling logic that can be identified in current work. This thesis' model of development has shown to allow for the automation of parts of the development process, hiding a significant part of this process' complexity. The resulting level of abstraction contributes to a separation of concerns as well as a reduction in the time required for development. This thesis' model for experiment setup interaction is based on the same concept of an address space, providing experimenters with a a method for control over their experiment setup's logic through a PC connection. This model of interaction hides the complexities of a FPGA and removes the need for a skills related to FPGA development. 
 
 \section{Future Work}
 \label{section:futurework}
+Different aspects of the model as proposed by this thesis have been explored and evaluated. Due to time limitations however, other aspects of the model have been left unexplored. The following sections will further elaborate on these areas, as they suggest possible points of entry for future work.
 
-\subsection{I/O Capabilities}
-Elaborate the current thoughts on how I/O may be reintroduced into the model.
+\subsection{Board I/O Capabilities}
+% Elaborate the current thoughts on how I/O may be reintroduced into the model.
+Even though a FPGA development board generally contains a number of I/O devices for human interaction, these have not been included in the current model as described in chapter \ref{chapter:model}. The inclusion of these devices however, could further contribute to the development of an experimenter's physical view of the experiment setup. The omission of these devices in the current model does not mean that their inclusion has not been considered. Due to time limitations, their functionality has not included in the current model definition.
+
+The type and number of available I/O devices is a specific property that is different for every type of development board. Since board-specific features have been considered to be handled by the controller's logic, the controller would have to be extended to support the input and output signals provided by I/O devices. The functionality assigned to these I/O devices may differ. One possibility would be to assign functionality that concerns the operation of the controller itself, such as cycle control. 
+
+Another possibility would be to assign functionality that allows for direct interaction with the experiment setup's address space. Since there exists no direct relation between the controller and the experiment setup, the mapping between the I/O device's signals and the experiment setup's signal would have to be dynamic. For example, one would be able to dynamically set a specific led to correspond to a specific bit in the experiment setup's address space. Simple I/O devices such as leds and switches would easily correspond to a value in the experiment setup's address space. In the case of timing-sensitive I/O devices however, additional logic would need to be implemented in order for these device to function properly, since the experiment setup does not run on a regular clock. For example, one application of a LCD display would be to display the ASCII respresentation of an address range set to correspond to a specific range in the experiment setup's address space. 
+
+\subsection{Experimentation Software}
+Although this thesis has developed a model for experimentation, the experimentation tools used for interaction are only suited for the experiments in this thesis. In order for the proposed model of interaction to be applied to a technically inexperienced audience, the development of a different type of user interface would be necessary. The address space description as included in an experimentation package is machine-readable and potentially allows for an automatic interpretation of the experiment setup's address space. As such, the address space can be presented to the user in a more user-friendly way. 
+
+The model currently does only present experiment setup signals as one or more bits and does not offer any information on how these values are to be interpreted. Signals might encode characters, integers or dates, for example.  In order to allow for automatic interpretation of signals, the model would have to be extended to allow for this information to be added to an address space description.  
 
 \subsection{Platform Independence}
-Model offers handles for achieving portability accross different FPGA (manufacturers).
+The achievement of platform independence has not been considered a goal during the development of this thesis' model and has not been tested as such. The model's definition does however offer handles in achieving this goal, since its definition has largely been established through generalization. In the context of this thesis, platform independence would mean that the same interfaces, tools and processes would apply to other development board and their related tools.
 
-PC communication protocol more explicit part of model, or making use of existing communication abstraction solutions
+In order to apply the current work to a different board containing a FPGA from a different manufacturer, one would first need to adapt the controller implementation to be compatible with the board's communication device as well as the board's clocking resources for clock gating. Allowing for the automated execution of the component composition process, this thesis' implementation would need to be adapted to include these new sources, as well as the other board's SDK. True independence could potentially be achieved through the engineering of a plug-in architecture that allows for the isolation of any board-specific feature or setting isolated into a single unit. 
 
-\subsection{Advanced Wrapping}
-Infering memory elements.
+\subsection{Advanced Projection}
+Experiment setup input and output signals are not the only candidates for projection on the experiment setup's address space. The model of an address space is also compatible with the representation of an experiment setup's internal state elements, such as registers and memories. Achieving this sort of projection however, does not allow for the distinct separation between experiment setup logic and experiment setup wrapper logic, since it requires an integral approach to the development of an experiment setup component. 
 
-\subsection{User }
+Although one might be required to integrate experiment setup logic and experiment setup wrapping logic, the resulting work could be packaged into an experiment setup package for automated processing in the component composition process, still allowing for the reuse of board-specific logic. In describing the experiment setup's address space, one might reserve a range of addresses to match the memory element's projection on the address space.
+
+\subsection{Advanced Automated Wrapping}
+The current implementation for the automated execution of the experiment setup wrapping process only considers the experiment setup logic's top-level input and output signals in the generation of an address space projection and corresponding logic. One improvement over the current implementation would be the automatic inclusion of internal signals in the generation of an address space projection. This would however require the automated modification of the experiment setup logic definition. Since signals are an explicit part of the VHDL language specification, this could potentially be achieved through automated syntax analysis and routing the signal to the experiment setup logic's top-level entity definition.
+
+Another improvement would be the automated projection of memory elements such as registers and memories on the experiment setup's address space, so that their values could be inspected and modified in-between cycles. The recognition of memory elements in a specific HDL implementation is not a trivial task, since it relies on the recognition of specific language constructs. For a solution one could look at tools for FPGA logic synthesis. These tools apply a similar concept in the mapping of memory elements within the user's logic definition onto block rams, for example. 
+
+\subsection{Application in Other Fields}
+The model described in this thesis is specifically developed to facilitate the application of FPGA development boards as a tool for experimentation in education. However, some of its features might be applicable to other fields as well. The means of interaction between a PC and logic contained within a FPGA through the concept of an address space might be of particular interest to other parties, since board-to-pc communication is a feature implemented in many projects. 
 
 \end{document}

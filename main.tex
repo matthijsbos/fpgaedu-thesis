@@ -1,7 +1,4 @@
-
-
-
-\documentclass[openright]{template/uva-bachelor-thesis}
+\documentclass{uva-inf-bachelor-thesis}
 \usepackage{graphicx}
 \usepackage[hyphens]{url}
 \usepackage{enumitem}
@@ -16,7 +13,7 @@
 \usepackage{xstring}
 \usepackage{hyperref}
 \usepackage{cleveref}
-\usepackage[a4paper]{geometry}
+% \usepackage[a4paper]{geometry}
 \usepackage{subfiles}
 \usepackage{dirtree}
 
@@ -31,23 +28,29 @@
 \usepackage{empheq}
 \setlength{\fboxsep}{1em}
 
+% \let\tmp\oddsidemargin
+% \let\oddsidemargin\evensidemargin
+% \let\evensidemargin\tmp
+% \reversemarginpar
+
+
 \lstset{captionpos=t, xleftmargin=\parindent, xrightmargin=\parindent, aboveskip=1em, belowskip=1em, abovecaptionskip=0em, belowcaptionskip=1em, escapeinside={(*@}{@*)}, float=h, frame=single, framexleftmargin=\parindent, framexrightmargin=\parindent, framextopmargin=1em, framexbottommargin=1em, basicstyle=\small}
 % \BeforeBeginEnvironment{lstlisting}{\par\noindent\begin{minipage}{\linewidth}}
 % \AfterEndEnvironment{lstlisting}{\end{minipage}}
 
 % Title Page
-\title{A model for \\experiment setups on\\ FPGA development boards}
+\title{A Model for \\Experiment Setups on\\ FPGA Development Boards}
 \author{Matthijs Bos}
-\supervisors{Anthony van Inge (UvA), Taco Walstra (UvA)}
-\signedby{n.a.}
+\supervisors{A. van Inge \& T. Walstra, University of Amsterdam}
+\signedby{}
 
 
-\begin{document} 
+\begin{document}
 
 \maketitle
 
 \begin{abstract}
-TODO
+This thesis proposes a model for the application of FPGA development boards as a tool for experimentation with digital logic. This model adopts the concept of an address space as a means for isolation of board-specific components in the logic's architecture, as well as a means for generalization of experiment setup interaction. This subsequently allows for the reuse of a number of architectural components across different projects as well as for the automation of different parts of the development process. As a result, the process for development of new FPGA configurations is shortened and reduced in terms of complexity.
 \end{abstract}
 
 \tableofcontents
@@ -68,13 +71,13 @@ TODO
 
 % Appendices
 
-\appendix
+% \appendix
 
-\subfile{chapters/process-analysis}
+% \subfile{chapters/process-analysis}
 
-\subfile{chapters/logic-diagrams}
+% \subfile{chapters/logic-diagrams}
 
-\subfile{chapters/experiment-setup-wrapper-sources}
+% \subfile{chapters/experiment-setup-wrapper-sources}
 
 
 \cleardoublepage

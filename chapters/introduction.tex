@@ -4,27 +4,17 @@
 
 \chapter{Introduction}
 \label{chapterintroduction}
-% nog niet helemaal logisch
-The use of field-programmable gate arrays (FPGA) has increased a lot in the past years. FPGAs have been successfully applied in many industries as well as in academic research. Manufacturers have put a great effort in further developing the capabilities of FPGAs, resulting in an increase in performance and size, as well as a decrease in power consumption and unit cost. Due to their high cost, FPGAs used to be unsuitable for application in classroom teaching. The developments of the past years however, put FPGAs within the reach of academic education. Nowadays, a full-featured FPGA development board can be acquired for under \$150. 
+The use of field-programmable gate arrays (FPGA) has increased a lot in the past years. FPGAs have been successfully applied in numerous fields of industry as well as different areas of academic research. Manufacturers have put an effort in the further development of FPGAs, resulting in an increase in performance and size, as well as a decrease in power consumption and unit cost. These developments have put FPGAs within the reach of academic education. Nowadays, a basic but fully-featured FPGA development board can be acquired for under \$50. 
 
-Computer architecture and organization is considered an important subject in the computer science program taught at the University of Amsterdam (UvA). The subject is taught to freshmen as an eight week course in an early stage of their curriculum. The subject's body of knowledge ranges from a low level understanding of a computer's central processing unit's (CPU) inner workings, design and surrounding systems to a more abstract view of the CPU that considers its instruction set from a software point of view.
+Among many other universities, the University of Amsterdam (UvA) considers Computer architecture and organization to be an important subject in the computer science curriculum. The subject is taught to undergraduate students as an eight week course in an early stage of their first year. The subject's body of knowledge ranges from a low level understanding of a computer's central processing unit's (CPU) inner workings, design and surrounding systems to a more abstract view of the CPU that considers its instruction set from a software point of view.
 
-% SIM-PL welof niet noemen?
-% Minder vanuit UvA, Meer vanuit Henessy and Patterson
-% dieper ingaan op experimenten?
-% meer focus op high-level, minder op digital design
-The UvA's course contents are based on the widely adopted works of Hennessy and Patterson, supported by a number of lab experiments. These lab experiments allow students to reinforce their theoretical understanding of the course's subject matter by interacting with a number of virtual computer architectures in a simulator environment. In the process of modernizing the computer architecture and organization course, the instructors sense the need for a more hand-on experience in which students are capable of interacting with physical devices. This physical view of a computer architecture may aid in a student's understanding of the subject matter.
+The UvA's course contents are based on the widely adopted works of Hennessy and Patterson, supported by a number of lab experiments. These lab experiments allow students to reinforce their theoretical understanding of the course's subject matter through interaction with a number of virtual computer architectures in a simulator environment. In the process of modernizing the computer architecture and organization course, the instructors sense the need for a more hand-on experience in which students are capable of interacting with physical devices. This physical view of a computer architecture may aid in a student's understanding of the subject matter.
 
-Hardware design is not part of the computer science curriculum.
+FPGAs allow for a computer architecture design to be taken out of the virtual environment of a simulator and be implemented in a physical device. As such, they may provide a solution in achieving the goals of the UvA's computer architecture and organization course instructors. The technical capabilities of FPGAs combined with the decreased cost of FPGA development boards makes their adoption in the UvA's course a viable option. 
 
-Using FPGAs to experiment with (variations of) live computer architecture implementations to perform qualitative experiments instead of doing (partial) actual implementation. HDL programming is not a part of the curriculum.
+Utilizing FPGAs in an experimental setup as well as the development of these setups are complex tasks that requires a specific set of skills, including digital design, hardware definition language (HDL) programming and familiarity with specialized development tools. The complexity of FPGAs combined with the set of skills required raises problems in the application of FPGAs in an eight week introductory level computer architecture and organization course. The development of these individual skills may deserve a course on their own and are beyond the scope of the UvA's undergraduate computer science curriculum. 
 
-FPGAs allow for a computer architecture design to be taken out of the virtual environment of a simulator and be implemented in a physical device. As such, they may provide a solution in achieving the goals of the UvA's computer architecture and organization course instructors. The technical capabilities of FPGAs combined with the decreased cost of FPGA development boards makes their adoption in the course a viable option. 
-
-Utilizing FPGAs however, is a complex task that requires a specific set of skills, including digital design, hardware definition language (HDL) programming and familiarity with specialized development tools. Their complexity and the set of skills required raises problems in the application of FPGAs in an eight week introductory level computer architecture and organization course. Each of these skills may deserve a course on their own and are mostly beyond the scope of the UvA's undergraduate computer science curriculum. 
-
-This thesis presents a generic solution that allows for students to utilize FPGAs in their lab experiments without the requirement of these more advanced skills. Experiments are performed using a Digilent Nexys 4 FPGA board, connected to a PC. An implementation is provided and validated through a number of experiments in which multiple variants of Hennessy and Patterson's MIPS computer architecture are running on an FPGA. The scope of this thesis is limited to a technical solution and does not evaluate the didactic effects of a hands-on approach in the teaching of these subjects.
-
+This thesis proposes a generic solution that aims for FPGAs to become an effective tool in education and experimentation. The proposed model for development and interaction removes the need for a number of the aforementioned skills through abstraction. This thesis focuses on providing a technical solution and does not aim to evaluate the didactical effects of the proposed model. In implementation of the proposed model is provided as well as an evaluation of its effects on a functional and technical level.
 
 \section{Problem Statement and Related Work}
 \label{sectionproblemstatement}
@@ -33,12 +23,12 @@ This thesis presents a generic solution that allows for students to utilize FPGA
 % TODO RTL beter benadrukken
 % TODO melden dat EE en CE niet op de UvA onderwezen worden
 
-In their teaching of computer architecture and organization at the University of Amsterdam's (UvA) department of computer science, the course instructors see an opportunity for improvement through introduction of FPGA development boards as a tool for experimentation during practical exercises. The instructors sense the need for a hands-on approach in teaching their subjects, since computer science students lack experience with physical hardware. The course is taught early in the first year of undergraduate students over a period of two months, so students are not expected to have any academic experience in the field of computer science. 
+In their teaching of computer architecture and organization at the University of Amsterdam's (UvA) department of computer science, the course instructors see an opportunity for improvement through introduction of FPGA development boards as a tool for experimentation during practical exercises. The instructors sense the need for a hands-on approach in teaching their subjects, since their students lack experience with physical hardware. The course is taught early in the first year of undergraduate students over a period of two months, so students are not expected to have any academic experience in the field of computer science. 
 
 
 \subsection{A Shift in Focus}
 Although computer architecture and organization is part of the curricula of electrical engineering, computer engineering and computer science students, its place is different in each curriculum. 
-For electrical engineering students, digital systems are the final station in terms of abstraction. For computer science students, it's the start of a journey. Computer engineering can be considered to be in the middle of this spectrum. The UvA's instructors aim to shift the course's focus to the abstract aspects of digital systems, such as instruction-level parallelism and caching strategies in computer architectures. The instructors find a higher-level level view of digital systems on a register-transfer level and an instruction level to be more in line with a computer science student's curriculum. Only a basic understanding of lower-level subjects such as digital design and electronic is pursued. In their decision, the instructors follow a trend that was observed in \cite[p. 205]{cs2013final}: a de-emphasis of digital design in computer science curricula. Deep coverage of digital design is considered to more appropriate in the curricula of electrical engineering and computer engineering. 
+For electrical engineering students, digital systems are the final station in terms of abstraction. For computer science students, it's the start of a journey. Computer engineering can be considered to be in the middle of this spectrum. The UvA's instructors aim to shift the course's focus to the abstract aspects of digital systems, such as instruction-level parallelism and caching strategies in computer architectures. The instructors find a higher-level level view of digital systems on a register-transfer level and an instruction level to be more in line with a computer science student's curriculum. Only a basic understanding of lower-level subjects such as digital design and electronics is pursued. In their decision, the instructors follow a trend that was observed in \cite[p. 205]{cs2013final}: a de-emphasis of digital design in computer science curricula. Deep coverage of digital design is considered to more appropriate in the curricula of electrical engineering and computer engineering. 
 
 The UvA's computer architecture and organization course contents are based on the works of Hennessy and Patterson \cite{hennessy2013computer} which considers the design process of a microprocessor from a higher-level view. In their work there is a significant focus on the numerical analysis of decisions made in that process. The instructors' intended goal for their practical sessions is to allow students to analyse the implications of these higher-level design decisions through experimentation. As also noted in \cite{paharsingh2009novel}, students who have not experimented with abstract subjects such as pipelining and caching show lower test scores in these areas. 
 
@@ -96,30 +86,28 @@ Adapting these methods' implementations to fit the UvA's instructors' goals coul
 \subsection{Wrap-up}
 The UvA's computer architecture and organization course instructors require a solution that allows their students to experiment with a series of varying computer architecture implementations. FPGAs may provide a physical approach to this problem, but current methods incorporating FPGA development boards do not provide a satisfying solution. Implementation-based methods do not manage to address the more complex subjects and are not suited to curriculum of the UvA's computer science students, due to the skills required. Students must be able to use FPGAs solely as tool for containment of ready-made computer architectures, without being burdened with the complexities of these devices. Hiding these complexities allows for students to focus on the higher-level aspects of these computer architectures and performing meaningful experiments, while the physical approach aids students in gaining an intuition for computer hardware.
 
-Some existing methods hide these complexities form their students, but only feature fixed computer architecture implementations. These systems are built from tightly-coupled components that do not allow for easy modification of the featured computer architecture. In order for the UvA's instructors to achieve their goal, a generic approach to embedding digital systems in FPGAs is required, allowing instructors to provide their students with a range of varying computer architecture implementations, while reusing standard components for containment within the FPGA and using generic PC software. The instructors' work should focus on implementing a computer architecture. Furthermore, their work should be easily adaptable to different FPGA development boards.
+Some existing methods hide these complexities form their students, but only feature static computer architecture implementations. These systems are built from tightly-coupled components that do not allow for easy modification of the featured computer architecture. In order for the UvA's instructors to achieve their goal, a generic approach to embedding digital systems in FPGAs is required, allowing instructors to provide their students with a range of varying computer architecture implementations, while reusing standard components for containment within the FPGA and using generic PC software. The instructors' work should focus on implementing a computer architecture. Furthermore, their work should be easily adaptable to different FPGA development boards.
 
 \section{Thesis Scope}
 \label{section:scope}
 Although this thesis' problem statement discusses various didactic aspects of the teaching of computer architecture and organization, evaluation of the proposed solution's educational value is explicitly excluded from this thesis' scope. The goal of this thesis is to find a technical solution that satisfies the UvA's instructors' requirements as described in the problem statement. 
 
-Achieving platform independence is not a goal, but has been taken into account and the model developed in this thesis offers handles in achieving this. It is discussed in section \ref{section:futurework} which discusses possible future work. 
+Achieving platform independence is not a goal of this thesis as well, but has been taken into account and the model developed in this thesis offers handles in achieving this. It is discussed in section \ref{section:futurework} which discusses possible future work. 
 
-\section{Research Question}
+% Iets over performance
 
-In order for FPGAs to provide students with a hands-on experience during their lab experiments, a solution is required 
-that removes the need for skills such as HDL programming and abstracts the complexities of working with FPGAs.
+\section{Research Questions}
 
-This thesis' research question is as follows: 
+Considering this thesis' problem statement and scope, two research questions can be derived. The first research question considers the process of developing an experiment setup that is contained within a FPGA development board:
+
+\begin{displayquote}
+How can the process of FPGA experiment setup development be altered such that it allows for reuse of loosely-coupled components and separation of concerns?
+\end{displayquote}
+
+This thesis' second research question focuses on the process of experimentation and interaction with experiment setups contained within a FPGA.
 
 \begin{displayquote}
 How can FPGAs be applied in computer architecture and organization lab experiments, while hiding their technical complexities and removing the need for HDL programming skills?
 \end{displayquote}
-
-How can the fpga development process be automated, such that the complexities of this development process are abstracted from the developer?
-
-
-
-
-
 
 \end{document}

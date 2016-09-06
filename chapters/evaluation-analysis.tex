@@ -1,17 +1,38 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\chapter{Evaluation \& Analysis}
+\chapter{Evaluation}
 
-\begin{itemize}
-    \item Compare the implementation with the works and methods discussed in section related work.
-    \item Validate through proof of concept, multiple examples of use cases.
-    \item Comparison to other methods
-    \item Analyze wrapper growth in terms of FPGA resource utilization.
-    \item Analyze validity and performance of wrapped components.
-    \item Analyze the appropriateness of an address space as a unit of abstraction and interaction
-    \item Validate the appropriateness of design decisions in the model, such as the adoption of address space
+In order to evaluate the effects of the proposed model, it has been applied in different situation in order to evaluate its performance and behaviour. Simple example experiment setups have been implemented and tested, in order to analyze specific parts of the model's definition. For interaction with the controllerś command interface, a simple shell has been developed for the purpose of cycle control and manual address space inspection. The example experiment setup implementations, as well as the shell are available through a git repository\footnote{https://github.com/matthijsbos/fpgaedu-examples}. 
+
+\section{Experimentation}
+For the purpose of testing the model's compatibility with experiment setups defined through combinational logic, an existing implementation of a 4-bit ALU was taken from the Internet. The current experiment setup wrapper implementation required some minor modifications to the ALU implementation's source code, due to the practical contraints as described in section \ref{section:experiment_setup_wrapper}. The source files were then processed by the experiment setup wrapper implementation in order to project its signals on an address space. After successful inspection of the process' output, the resulting files could then be processed by through the implementation of the component composition process in order to successfully create an experimentation package. 
+
+For functional validation of the experimentation package's contents, the bitstream file was manually programmed onto the Digilent Nexys 4 board's FPGA. Programming was done using Xilinx Vivado's hardware management tools. A connection between the PC and the controller's command interface was then established throught the shell program. Simple reading and writing commands allowed for interaction with the experiment setup's address space. The experimentation package's manifest file was used as a reference for the signal projections. Through manual modification of the experiment setup input signals' corresponding address values, it has proved possible to interact with the experiment setup logic. Through observation of address values corresponding the experiment setup's output signals, the ALU's correct functional behaviour could be validated. 
+
+In order to test the behaviour of experiment setup logic defined through combinational logic, an existing implementation of a shift register was taken from the Internet. Through the same process as described previously, the experiment setup's logic was processed into an experimentation package. After having programmed the FPGA, the shift register's functional behaviour could be validated. Through the manual operation the controller's cycle operation, one could accurately observe the shift register state transitions through the address value corresponding to its output port. 
+
+A final experiment has been implemented in order to test the effect of an experiment setup whose signals are projected onto multiple addresses, due to the signal's width being larger than that of a single address. A 26-bit counter was implemented and automatically processed through the experiment setup wrapping process. As could be observed in the generated experiment setup wrapper logic, the counter's output signal was correctly projected on multiple addresses in the experiment setup's address space. After processing the file through the component composition process. Configuring the FPGA using the experimentation package's bitstream file showed the output signal to be correctly partitioned over multiple addresses as multiple cycles were executed.
+
+\section{Interaction}
+The concept of an address space as an means of interaction with the experiment setup's signal levels has proven to be a suitable abstraction. The functional behaviour of the tested experiment setups has been unaffected by this additional functionality and the concept of an address space has proven to be a reliable means of interaction. One could control different experiment setups without requiring modification of the shell used for experiment setup, since the controller's interface remained unchanged across different experimentation packages. 
+
+The utilization of FPGA clock buffers has shown to be an effective method for the control of state transitions in isolated blocks of logic. One could accurately observe the effects of the cycle operations in the experiment setup's address space and no negative effects were observed.   
+
+\section{Abstraction Through Automation}
+The automation of the experiment setup wrapping process, as well as the component composition process has proven to be an effective method in reducing the time and work required in embedding experiment setup logic into a FPGA. In the development of the previous experiments, it has proven possible to create a properly functioning experimentation package within 15 minutes. This was achieved through the use of existing experiment setup implementations. Most of the time during the development of these packages was spent on modification of the implementation's source code, as the current implementation of the experiment setup wrapper is constrained in its support for VHDL language features. The automated processes generally complete within several minutes. 
+
+The perceived level of complexity as experienced during the development process has also significantly been reduced as a result of the automation these development processes, since a majority of the development process' operations have been reduced to two abstract operations. Although untested, the model's modifications seem to allow for a significant reduction in the knowledge and skills required in for operation of the development process.
+
+% \begin{itemize}
+%     \item Compare the implementation with the works and methods discussed in section related work.
+%     \item Validate through proof of concept, multiple examples of use cases.
+%     \item Comparison to other methods
+%     \item Analyze wrapper growth in terms of FPGA resource utilization.
+%     \item Analyze validity and performance of wrapped components.
+%     \item Analyze the appropriateness of an address space as a unit of abstraction and interaction
+%     \item Validate the appropriateness of design decisions in the model, such as the adoption of address space
     
-\end{itemize}
+% \end{itemize}
 
 \end{document}
